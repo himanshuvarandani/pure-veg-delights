@@ -2,7 +2,7 @@ import Image from "next/image"
 
 const ProductCard = () => {
   return (
-    <div className="border-2 rounded-xl overflow-hidden w-60 m-2">
+    <div className="border-2 border-yellow-500 rounded-xl overflow-hidden w-60 m-2">
       <div className="relative w-full h-40">
         <Image
           src="/food.jpeg"

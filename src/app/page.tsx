@@ -1,3 +1,4 @@
+import CategoriesList from "@/components/CategoriesList";
 import ProductsList from "@/components/ProductsList";
 import { faClock, faLocation, faTimeline, faTruck, faUtensils } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -19,7 +20,7 @@ export default function Home() {
             />
           </div>
           <div className="px-5 py-10 ml-5 md:ml-20 lg:ml-40">
-            <h3 className="text-lg sm:text-xl mb-6">Eat Delhi Delight's From</h3>
+            <h3 className="text-lg sm:text-xl mb-6">Eat Delhi Delight&apos;s From</h3>
             <h1 className="text-4xl sm:text-6xl mb-1">Shri Ram Pure Veg</h1>
             <h3 className="text-xl sm:text-3xl mb-10">Where Every Bite is a Blessing ...</h3>
             <button className="rounded-2xl bg-orange-550 px-4 py-2">Order Now</button>
@@ -68,7 +69,7 @@ export default function Home() {
 
       <div className="py-5 px-5 sm:px-10 lg:px-20">
         <h3 className="text-2xl text-orange-550 font-bold">Categories</h3>
-        {/* <CategoriesList /> */}
+        <CategoriesList />
       </div>
     </main>
   );
