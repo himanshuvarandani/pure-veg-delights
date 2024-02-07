@@ -1,3 +1,4 @@
+import ProductsList from "@/components/ProductsList";
 import { faClock, faLocation, faTimeline, faTruck, faUtensils } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Image from "next/image";
@@ -62,7 +63,7 @@ export default function Home() {
 
       <div className="py-5 px-5 sm:px-10 lg:px-20">
         <h3 className="text-2xl text-orange-550 font-bold">BestSelling Products</h3>
-        {/* <ProductsList /> */}
+        <ProductsList />
       </div>
 
       <div className="py-5 px-5 sm:px-10 lg:px-20">
