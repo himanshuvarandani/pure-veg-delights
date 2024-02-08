@@ -1,8 +1,12 @@
 import ProductCard from "./ProductCard"
 
-const ProductsList = () => {
+type PropsType = {
+  classNames: string
+}
+
+const ProductsList = ({ classNames }: PropsType) => {
   return (
-    <div className="flex flex-wrap">
+    <div className={`flex flex-wrap ${classNames}`}>
       <ProductCard />
       <ProductCard />
       <ProductCard />

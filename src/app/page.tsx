@@ -1,13 +1,14 @@
 import CategoriesList from "@/components/CategoriesList";
 import ProductsList from "@/components/ProductsList";
-import { faClock, faLocation, faTimeline, faTruck, faUtensils } from "@fortawesome/free-solid-svg-icons";
+import Services from "@/components/Services";
+import { faClock, faLocation, faTruck } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Image from "next/image";
 import Link from "next/link";
 
 export default function Home() {
   return (
-    <main className="min-h-screen py-10">
+    <main className="min-h-screen">
       <div className="w-full flex flex-col items-center">
         <div className="relative w-full">
           <div className="absolute inset-0 -z-10">
@@ -62,13 +63,20 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="py-5 px-5 sm:px-10 lg:px-20">
-        <h3 className="text-2xl text-orange-550 font-bold">BestSelling Products</h3>
-        <ProductsList />
+      <div className="pb-10 px-5 sm:px-10 lg:px-20">
+        <h3 className="text-2xl text-orange-550 text-center font-bold mb-2">Today's Special</h3>
+        <ProductsList classNames="justify-around" />
       </div>
 
-      <div className="py-5 px-5 sm:px-10 lg:px-20">
-        <h3 className="text-2xl text-orange-550 font-bold">Categories</h3>
+      <Services />
+
+      <div className="py-10 px-5 sm:px-10 lg:px-20">
+        <h3 className="text-2xl text-orange-550 text-center font-bold mb-2">BestSelling Products</h3>
+        <ProductsList classNames="justify-around" />
+      </div>
+
+      <div className="bg-orange-500 py-10 px-5 sm:px-10 lg:px-20">
+        <h3 className="text-2xl text-white text-center font-bold mb-2">Categories</h3>
         <CategoriesList />
       </div>
     </main>
