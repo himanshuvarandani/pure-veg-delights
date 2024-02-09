@@ -1,4 +1,4 @@
-import { faBasketShopping, faGlobe, faLocation, faTruck } from "@fortawesome/free-solid-svg-icons"
+import { faBasketShopping, faGlobe, faLocationDot, faTruck } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import Image from "next/image"
 import Link from "next/link"
@@ -14,7 +14,7 @@ const Services = () => {
             className="w-full sm:w-52 lg:w-60 rounded-2xl flex justify-between items-center bg-white px-4 py-2"
           >
             Dine In
-            <FontAwesomeIcon icon={faLocation} height={30} className="text-orange-550" />
+            <FontAwesomeIcon icon={faLocationDot} height={30} className="text-orange-550" />
           </Link>
           <Link
             href="/pick-up"

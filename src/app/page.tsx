@@ -1,7 +1,7 @@
 import CategoriesList from "@/components/CategoriesList";
 import ProductsList from "@/components/ProductsList";
 import Services from "@/components/Services";
-import { faClock, faLocation, faTruck } from "@fortawesome/free-solid-svg-icons";
+import { faClock, faLocationDot, faTruck } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Image from "next/image";
 import Link from "next/link";
@@ -39,7 +39,7 @@ export default function Home() {
         </div>
         <div className="border-t-2 lg:border-l-2 border-orange-550 w-full sm:w-3/4 md:w-1/2 lg:h-12 lg:w-auto" />
         <div className="flex items-center space-x-5">
-          <FontAwesomeIcon icon={faLocation} height={45} className="text-orange-550" />
+          <FontAwesomeIcon icon={faLocationDot} height={45} className="text-orange-550" />
           <div>
             <h5 className="font-bold sm:text-lg">DineIn / PickUp</h5>
             <p className="text-sm sm:text-base">
