@@ -6,8 +6,8 @@ export default function Header() {
   return (
     <div className="relative w-full bg-orange-550 text-white py-2">
       <div className="flex items-center justify-between px-4 sm:px-6 sm:mx-10">
-        <div className="inline-flex items-center space-x-2">
-          <Link href={"/"} className="inline-block mr-2">
+        <Link href={"/"} className="inline-flex items-center space-x-2">
+          <div className="inline-block mr-2">
             <Image
               width={60}
               height={60}
@@ -15,9 +15,9 @@ export default function Header() {
               alt="Delhi Delights"
               priority={true}
             />
-          </Link>
+          </div>
           <h1 className="font-bold">SHRI RAM<br />Pure Veg</h1>
-        </div>
+        </Link>
         <div className="hidden md:flex items-center space-x-8">
           <div className="flex border-2 border-white rounded-3xl overflow-hidden pl-2">
             <input
