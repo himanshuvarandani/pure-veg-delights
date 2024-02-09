@@ -21,7 +21,7 @@ const SearchBar = () => {
   return (
     <div className="flex border-2 border-orange-550 rounded-3xl overflow-hidden pl-2 mx-2">
       <input
-        className="bg-transparent text-orange-550 placeholder-orange-550 my-1 mx-2 p-1"
+        className="bg-transparent text-orange-550 placeholder-orange-550 my-1 mx-2 p-1 focus:outline-0"
         placeholder="Search a product ..."
         defaultValue={searchParams.get("q")?.toString()}
         onChange={(e) => handleSearch(e.target.value)}

@@ -1,11 +1,14 @@
 import ProductsList from "@/components/ProductsList"
 import SearchBar from "@/components/SearchBar"
+import { Suspense } from "react"
 
 const Search = () => {
   return (
     <div className="py-10">
       <div className="flex justify-center pb-5">
-        <SearchBar />
+        <Suspense>
+          <SearchBar />
+        </Suspense>
       </div>
 
       <div className="pb-10 px-5 sm:px-10 lg:px-20">
