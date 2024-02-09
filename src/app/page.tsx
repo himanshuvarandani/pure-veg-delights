@@ -24,7 +24,12 @@ export default function Home() {
             <h3 className="text-lg sm:text-xl mb-6">Eat Delhi Delight&apos;s From</h3>
             <h1 className="text-4xl sm:text-6xl mb-1">Shri Ram Pure Veg</h1>
             <h3 className="text-xl sm:text-3xl mb-10">Where Every Bite is a Blessing ...</h3>
-            <button className="rounded-2xl bg-orange-550 px-4 py-2">Order Now</button>
+            <Link
+              href="/products"
+              className="rounded-2xl bg-orange-550 px-4 py-2"
+            >
+              Order Now
+            </Link>
           </div>
         </div>
       </div>
@@ -64,7 +69,7 @@ export default function Home() {
       </div>
 
       <div className="pb-10 px-5 sm:px-10 lg:px-20">
-        <h3 className="text-2xl text-orange-550 text-center font-bold mb-2">Today's Special</h3>
+        <h3 className="text-2xl text-orange-550 text-center font-bold mb-2">Today&apos;s Special</h3>
         <ProductsList classNames="justify-around" theme="white" />
       </div>
 
