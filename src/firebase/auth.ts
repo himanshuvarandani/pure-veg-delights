@@ -1,4 +1,4 @@
-import { createUserWithEmailAndPassword } from "firebase/auth"
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth"
 import { auth } from "./firebase"
 
 export const signUp = async (
@@ -17,6 +17,26 @@ export const signUp = async (
         message = "Email is already in use"
       else if (error.code === "auth/invalid-email")
         message = "Invalid Email"
+      else if (error.code === "auth/network-request-failed")
+        message = "Check your Network Connection and Try Again!"
+    }
+
+    return { success: false, error: message }
+  }
+}
+
+export const signIn = async (
+  email: string,
+  password: string
+): Promise<{ success: boolean, error?: string}> => {
+  try {
+    await signInWithEmailAndPassword(auth, email, password)
+    return { success: true }
+  } catch (error: any) {
+    let message = "Error during sign in, Try Again!"
+    if (error) {
+      if(error.code === "auth/invalid-credential")
+        message = "Invalid Credential"
       else if (error.code === "auth/network-request-failed")
         message = "Check your Network Connection and Try Again!"
     }

@@ -1,6 +1,6 @@
 "use server"
 
-import { signUp } from "@/firebase/auth"
+import { signIn, signUp } from "@/firebase/auth"
 import { createUser } from "@/firebase/user"
 import { redirect } from "next/navigation"
 
@@ -28,6 +28,21 @@ export const signUpAction = async (
       redirect("/")
     }
     return { message: result.error }
+  }
+  return { message: response.error }
+}
+
+export const signInAction = async (
+  prevState: { message: string | undefined },
+  data: FormData
+) => {
+  const response = await signIn(
+    String(data.get("email")),
+    String(data.get("password")),
+  )
+
+  if (response.success) {
+    redirect("/")
   }
   return { message: response.error }
 }
