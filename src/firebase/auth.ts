@@ -1,4 +1,10 @@
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth"
+import {
+  NextOrObserver,
+  User,
+  createUserWithEmailAndPassword,
+  onAuthStateChanged as _onAuthStateChanged,
+  signInWithEmailAndPassword
+} from "firebase/auth"
 import { auth } from "./firebase"
 
 export const signUp = async (
@@ -43,4 +49,8 @@ export const signIn = async (
 
     return { success: false, error: message }
   }
+}
+
+export const onAuthStateChanged = (callback: NextOrObserver<User>) => {
+  return _onAuthStateChanged(auth, callback)
 }
