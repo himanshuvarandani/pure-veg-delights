@@ -70,14 +70,22 @@ export default function Home() {
 
       <div className="pb-10 px-5 sm:px-10 lg:px-20">
         <h3 className="text-2xl text-orange-550 text-center font-bold mb-2">Today&apos;s Special</h3>
-        <ProductsList classNames="justify-around" theme="white" />
+        <ProductsList
+          classNames="justify-around"
+          theme="white"
+          products={[]}
+        />
       </div>
 
       <Services />
 
       <div className="py-10 px-5 sm:px-10 lg:px-20">
         <h3 className="text-2xl text-orange-550 text-center font-bold mb-2">BestSelling Products</h3>
-        <ProductsList classNames="justify-around" theme="white" />
+        <ProductsList
+          classNames="justify-around"
+          theme="white"
+          products={[]}
+        />
       </div>
 
       <div className="bg-orange-500 py-10 px-5 sm:px-10 lg:px-20">

@@ -2,9 +2,10 @@ import Image from "next/image"
 
 type PropsType = {
   theme: "white" | "orange"
+  product: Product
 }
 
-const ProductCard = ({ theme }: PropsType) => {
+const ProductCard = ({ theme, product }: PropsType) => {
   return (
     <div 
       className={`border-2 rounded-xl overflow-hidden w-60 m-2
@@ -13,7 +14,7 @@ const ProductCard = ({ theme }: PropsType) => {
     >
       <div className="relative w-full h-40">
         <Image
-          src="/food.jpeg"
+          src={product.image}
           alt="Food Image"
           layout="fill"
           objectFit="cover"
@@ -21,13 +22,13 @@ const ProductCard = ({ theme }: PropsType) => {
         />
       </div>
       <div className="py-5 px-2">
-        <h5 className="sm:text-lg mb-1">Chole Kulche</h5>
+        <h5 className="sm:text-lg mb-1">{product.name}</h5>
         <p
           className={`text-2xl font-bold mb-4
             ${theme === "white" ? "text-orange-550" : "text-white"}
           `}
         >
-          Rs. 70
+          Rs. {product.price}/-
         </p>
         <button
           className={`w-full rounded-2xl text-center px-4 py-2

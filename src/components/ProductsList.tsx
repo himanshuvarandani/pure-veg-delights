@@ -3,16 +3,15 @@ import ProductCard from "./ProductCard"
 type PropsType = {
   classNames?: string
   theme: "white" | "orange"
+  products: Array<Product>
 }
 
-const ProductsList = ({ classNames, theme }: PropsType) => {
+const ProductsList = ({ classNames, theme, products=[] }: PropsType) => {
   return (
     <div className={`flex flex-wrap ${classNames}`}>
-      <ProductCard theme={theme} />
-      <ProductCard theme={theme} />
-      <ProductCard theme={theme} />
-      <ProductCard theme={theme} />
-      <ProductCard theme={theme} />
+      {products.map((product: Product) => (
+        <ProductCard theme={theme} product={product} key={product.name} />
+      ))}
     </div>
   )
 }
