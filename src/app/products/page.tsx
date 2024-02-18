@@ -1,9 +1,12 @@
 import ProductsList from "@/components/ProductsList"
 import SearchBar from "@/components/SearchBar"
 import SearchProductsList from "@/components/SearchProductsList"
+import { todaySpecialProducts } from "@/firebase/products"
 import { Suspense } from "react"
 
 const Products = async () => {
+  const todaySpecial: Array<Product> = await todaySpecialProducts()
+
   return (
     <div className="py-10">
       <div className="flex justify-center pb-5">
@@ -19,7 +22,7 @@ const Products = async () => {
         <ProductsList
           classNames="justify-around"
           theme="orange"
-          products={[]}
+          products={todaySpecial}
         />
       </div>
     </div>

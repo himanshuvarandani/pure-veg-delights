@@ -5,6 +5,7 @@ type Product = {
   category: string
   image: string
   tags: Array<string>
+  todaySpecial: boolean
 }
 
 type CategoryProducts = { [key: string]: Array<Product> }

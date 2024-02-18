@@ -11,10 +11,7 @@ const SearchProductsList = () => {
   
   useEffect(() => {
     searchProducts(searchParams.get("q") || "")
-      .then((response) => {
-        if (!response.success) console.log(response.error)
-        else setProducts(response.products)
-      })
+      .then((data) => setProducts(data))
       .catch(() => console.log("Error while fetching products"))
   }, [searchParams.get("q")])
 

@@ -1,15 +1,9 @@
 import { CollectionReference, collection, getDocs, query, where } from "firebase/firestore"
 import { firestore } from "./firebase"
 
-type ResponseType = {
-  success: boolean,
-  products: CategoryProducts
-  error?: string,
-}
-
 export const searchProducts = async (
   searchQuery: string = ""
-): Promise<ResponseType> => {
+): Promise<CategoryProducts> => {
   const productRef: CollectionReference = collection(firestore, "products")
 
   try {
@@ -30,12 +24,30 @@ export const searchProducts = async (
       products[data.category].push({ id: doc.id, ...data } as Product)
     })
 
-    return { success: true, products: products }
+    return products
   } catch (e) {
-    return {
-      success: false,
-      products: {},
-      error: "Not able to fetch products, Try again!"
-    }
+    return {}
+  }
+}
+
+export const todaySpecialProducts = async (): Promise<Array<Product>> => {
+  const productRef: CollectionReference = collection(firestore, "products")
+
+  try {
+    const productsQuery = query(
+      productRef,
+      where("todaySpecial", "==", true)
+    )
+    
+    const data = await getDocs(productsQuery)
+    let products: Array<Product> = []
+    
+    data.docs.forEach(doc => {
+      products.push({ id: doc.id, ...doc.data() } as Product)
+    })
+
+    return products
+  } catch (e) {
+    return []
   }
 }
