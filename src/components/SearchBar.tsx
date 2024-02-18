@@ -21,8 +21,6 @@ const SearchBar = () => {
   }, 500)
 
   useEffect(() => {
-    console.log(1, searchParams.get("q"));
-    
     setQuery(searchParams.get("q") || "")
   }, [searchParams.get("q")])
 

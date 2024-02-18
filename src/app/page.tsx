@@ -71,7 +71,7 @@ export default async function Home() {
         </div>
       </div>
 
-      <div className="pb-10 px-5 sm:px-10 lg:px-20">
+      <div className="pb-10 px-2 xs:px-5 sm:px-10 lg:px-20">
         <h3 className="text-2xl text-orange-550 text-center font-bold mb-2">Today&apos;s Special</h3>
         <ProductsList
           classNames="justify-around"
@@ -82,7 +82,7 @@ export default async function Home() {
 
       <Services />
 
-      <div className="py-10 px-5 sm:px-10 lg:px-20">
+      <div className="py-10 px-2 xs:px-5 sm:px-10 lg:px-20">
         <h3 className="text-2xl text-orange-550 text-center font-bold mb-2">BestSelling Products</h3>
         <ProductsList
           classNames="justify-around"

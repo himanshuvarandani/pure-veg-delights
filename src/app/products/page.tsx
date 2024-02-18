@@ -8,14 +8,16 @@ const Products = async () => {
   const todaySpecial: Array<Product> = await todaySpecialProducts()
 
   return (
-    <div className="py-10">
+    <div className="pt-10">
       <div className="flex justify-center pb-5">
         <Suspense>
           <SearchBar />
         </Suspense>
       </div>
 
-      <SearchProductsList />
+      <Suspense>
+        <SearchProductsList />
+      </Suspense>
 
       <div className="bg-orange-500 py-10 px-5 sm:px-10 lg:px-20">
         <h3 className="text-2xl text-white text-center font-bold mb-2">Today&apos;s Special</h3>

@@ -1,6 +1,8 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import SessionLink from './SessionLink'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faCartShopping, faUser } from '@fortawesome/free-solid-svg-icons'
 
 export default function Header() {
   return (
@@ -28,23 +30,26 @@ export default function Header() {
         </div>
         <div className="flex items-center space-x-2">
           <SessionLink
-            title="Sign In"
             href="/signin"
             classNames="px-3 py-2 text-sm font-semibold"
             sessionRequire={false}
-          />
+          >
+            Sign In
+          </SessionLink>
           <SessionLink
-            title="Cart"
             href="/cart"
-            classNames="px-3 py-2 text-sm font-semibold"
+            classNames="mx-3 my-2 text-sm font-semibold"
             sessionRequire={true}
-          />
+          >
+            <FontAwesomeIcon icon={faCartShopping} height={30} />
+          </SessionLink>
           <SessionLink
-            title="Account"
             href="/account"
             classNames="px-3 py-2 text-sm font-semibold"
             sessionRequire={true}
-          />
+          >
+            <FontAwesomeIcon icon={faUser} height={30} />
+          </SessionLink>
         </div>
       </div>
     </div>

@@ -4,14 +4,14 @@ import useAuth from "@/hooks/useAuth"
 import Link from "next/link"
 
 type SessionLinkProps = {
-  title: string
+  children: React.ReactNode
   href: string
   classNames: string
   sessionRequire: boolean
 }
 
 const SessionLink = ({
-  title,
+  children,
   href,
   classNames,
   sessionRequire
@@ -22,7 +22,7 @@ const SessionLink = ({
 
   return (
     <Link href={href} className={classNames}>
-      {title}
+      {children}
     </Link>
   )
 }
