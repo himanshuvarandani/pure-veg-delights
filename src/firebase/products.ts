@@ -1,22 +1,33 @@
-import { CollectionReference, QueryDocumentSnapshot, SnapshotOptions, collection, getDocs } from "firebase/firestore"
+import { CollectionReference, collection, getDocs, query, where } from "firebase/firestore"
 import { firestore } from "./firebase"
 
 type ResponseType = {
   success: boolean,
-  products: { [key: string]: Array<Product> }
+  products: CategoryProducts
   error?: string,
 }
 
-export const searchProducts = async (query: string = ""): Promise<ResponseType> => {
+export const searchProducts = async (
+  searchQuery: string = ""
+): Promise<ResponseType> => {
   const productRef: CollectionReference = collection(firestore, "products")
 
   try {
-    const data = await getDocs(productRef)
-    let products: { [key: string]: Array<Product> } = {}
+    const productsQuery = query(
+      productRef,
+      where("tags", "array-contains-any", searchQuery.split(" "))
+    )
+    
+    const data = await getDocs(!searchQuery ? productRef : productsQuery)
+    let products: CategoryProducts = {}
+    
+    data.docs.forEach(doc => {
+      const data = doc.data()
 
-    // data: { [categoryKey]: { [number]: Product }}
-    data.forEach((category) => {
-      products[category.id] = Object.values(category.data()).map(doc => doc as Product)
+      if (!products[data.category])
+        products[data.category] = []
+
+      products[data.category].push({ id: doc.id, ...data } as Product)
     })
 
     return { success: true, products: products }
@@ -24,7 +35,7 @@ export const searchProducts = async (query: string = ""): Promise<ResponseType> 
     return {
       success: false,
       products: {},
-      error: "Not able to create user, Try again!"
+      error: "Not able to fetch products, Try again!"
     }
   }
 }
