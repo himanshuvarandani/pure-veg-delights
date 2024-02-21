@@ -9,3 +9,10 @@ type Product = {
 }
 
 type CategoryProducts = { [key: string]: Array<Product> }
+
+type Cart = {
+  [key: string]: {
+    product: Product
+    quantity: number
+  }
+}

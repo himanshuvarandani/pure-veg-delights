@@ -2,16 +2,27 @@
 
 import { onAuthStateChanged } from "@/firebase/auth"
 import { User } from "firebase/auth"
-import { ReactNode, createContext, useEffect, useState } from "react"
+import { Dispatch, ReactNode, SetStateAction, createContext, useEffect, useState } from "react"
 
-type PropsType ={
+type PropsType = {
   children: ReactNode
 }
 
-export const AuthContext = createContext<{ user: User | null}>({ user: null })
+type ContextType = {
+  user: User | null
+  cart: Cart
+  setCart: Dispatch<SetStateAction<Cart>>
+}
+
+export const AuthContext = createContext<ContextType>({
+  user: null,
+  cart: {},
+  setCart: () => {},
+})
 
 export const AuthContextProvider = ({ children }: PropsType) => {
   const [user, setUser] = useState<User | null>(null)
+  const [cart, setCart] = useState<Cart>({})
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged((authUser) => {
@@ -21,8 +32,17 @@ export const AuthContextProvider = ({ children }: PropsType) => {
     return () => unsubscribe()
   }, [])
 
+  useEffect(() => {
+    const storedCart = localStorage.getItem("cart")
+    if (storedCart) setCart(JSON.parse(storedCart))
+  }, [])
+
+  useEffect(() => {
+    localStorage.setItem("cart", JSON.stringify(cart))
+  }, [cart])
+
   return (
-    <AuthContext.Provider value={{ user }}>
+    <AuthContext.Provider value={{ user, cart, setCart }}>
       {children}
     </AuthContext.Provider>
   )

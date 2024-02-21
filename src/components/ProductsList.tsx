@@ -1,4 +1,5 @@
 import Image from "next/image"
+import AddToCart from "./AddToCart"
 
 type PropsType = {
   classNames?: string
@@ -35,13 +36,7 @@ const ProductsList = ({ classNames, theme, products=[] }: PropsType) => {
               >
                 Rs. {product.price}/-
               </p>
-              <button
-                className={`w-full rounded-2xl text-sm sm:text-base text-center px-4 py-2
-                  ${theme === "white" ? "bg-orange-550" : "bg-white"}
-                `}
-              >
-                Add to Cart
-              </button>
+              <AddToCart theme={theme} product={product} />
             </div>
           </div>
         </div>
