@@ -1,8 +1,8 @@
 "use client"
 
 import Link from "next/link"
-import ProductsList from "./ProductsList"
 import useAuth from "@/hooks/useAuth"
+import ProductCard from "./ProductCard"
 
 const CartProducts = () => {
   const { cart } = useAuth()
@@ -19,7 +19,15 @@ const CartProducts = () => {
           </p>
         </div>
       ) : (
-        <ProductsList theme="white" products={[]} />
+        <div className="flex flex-wrap justify-center">
+          {Object.keys(cart).map(productId => (
+            <ProductCard
+              theme="white"
+              product={cart[productId].product}
+              key={productId}
+            />
+          ))}
+        </div>
       )}
     </div>
   )

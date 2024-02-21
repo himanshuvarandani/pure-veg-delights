@@ -4,7 +4,7 @@ import TodaySpecial from "@/components/TodaySpecial"
 const Cart = () => {
   return (
     <div>
-      <div className="p-10">
+      <div className="py-10 px-2 xs:px-5 sm:px-10">
         <h2 className="text-3xl text-orange-550 text-center font-bold mb-2">Cart</h2>
         <CartProducts />
       </div>
