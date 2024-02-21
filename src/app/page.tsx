@@ -1,15 +1,13 @@
 import Categories from "@/components/Categories"
 import ProductsList from "@/components/ProductsList"
 import Services from "@/components/Services"
-import { todaySpecialProducts } from "@/firebase/products"
+import TodaySpecial from "@/components/TodaySpecial"
 import { faClock, faLocationDot, faTruck } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import Image from "next/image"
 import Link from "next/link"
 
 export default async function Home() {
-  const todaySpecial: Array<Product> = await todaySpecialProducts()
-
   return (
     <main className="min-h-screen">
       <div className="w-full flex flex-col items-center">
@@ -71,15 +69,7 @@ export default async function Home() {
         </div>
       </div>
 
-      <div className="pb-10 px-2 xs:px-5 sm:px-10 lg:px-20">
-        <h3 className="text-2xl text-orange-550 text-center font-bold mb-2">Today&apos;s Special</h3>
-        <ProductsList
-          classNames="justify-around"
-          theme="white"
-          products={todaySpecial}
-        />
-      </div>
-
+      <TodaySpecial theme="white" />
       <Services />
 
       <div className="py-10 px-2 xs:px-5 sm:px-10 lg:px-20">
@@ -87,7 +77,7 @@ export default async function Home() {
         <ProductsList
           classNames="justify-around"
           theme="white"
-          products={todaySpecial}
+          products={[]}
         />
       </div>
 
