@@ -27,7 +27,7 @@ export default async function Home() {
             <h3 className="text-xl sm:text-3xl mb-10">Where Every Bite is a Blessing ...</h3>
             <Link
               href="/products"
-              className="rounded-2xl bg-orange-550 px-4 py-2"
+              className="rounded-2xl bg-orange-550 text-white px-4 py-2"
             >
               Order Now
             </Link>
