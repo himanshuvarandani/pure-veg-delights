@@ -2,6 +2,7 @@ import Footer from "@/components/Footer"
 import Header from "@/components/Header"
 import { AuthContextProvider } from "@/context/AuthContext"
 import type { Metadata } from "next"
+import Script from "next/script"
 import "./globals.css"
 
 export const metadata: Metadata = {
@@ -15,14 +16,17 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en">
-      <body>
-        <AuthContextProvider>
-          <Header />
-          {children}
-          <Footer />
-        </AuthContextProvider>
-      </body>
-    </html>
+    <>
+      <html lang="en">
+        <body>
+          <AuthContextProvider>
+            <Header />
+            {children}
+            <Footer />
+          </AuthContextProvider>
+        </body>
+      </html>
+      <Script src="https://checkout.razorpay.com/v1/checkout.js" />
+    </>
   )
 }

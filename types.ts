@@ -27,14 +27,18 @@ type Order = {
   gst: number
   total: number
   placedAt: Date
-  status:
-    "Payment Pending" |
-    "Payment Cancelled" |
-    "Payment Done" |
-    "Accepted" |
-    "Preparing" |
-    "Delivering" |
-    "Completed" |
-    "Cancelled"
+  status: OrderStatus
   lastUpdated: Date
+  razorpayOrderId?: string
+  razorpayPaymentId?: string
 }
+
+type OrderStatus =
+  "Payment Pending" |
+  "Payment Cancelled" |
+  "Payment Done" |
+  "Accepted" |
+  "Preparing" |
+  "Delivering" |
+  "Completed" |
+  "Cancelled"

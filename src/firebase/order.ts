@@ -1,4 +1,4 @@
-import { addDoc, collection } from "firebase/firestore"
+import { addDoc, collection, doc, updateDoc } from "firebase/firestore"
 import { firestore } from "./firebase"
 
 export const createOrder = async (
@@ -12,5 +12,21 @@ export const createOrder = async (
   } catch(e) {
     console.log(e)
     return null
+  }
+}
+
+export const updateOrder = async (
+  orderId: string,
+  status: OrderStatus,
+  razorpayOrderId: string = "",
+  razorpayPaymentId: string = "",
+): Promise<{ success: boolean, error?: string}> => {
+  const orderRef = doc(firestore, "orders", orderId)
+
+  try {
+    await updateDoc(orderRef, { status, razorpayOrderId, razorpayPaymentId })
+    return { success: true }
+  } catch (e) {
+    return { success: false, error: "Not able to create user, Try again!" }
   }
 }
