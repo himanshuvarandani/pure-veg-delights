@@ -8,7 +8,7 @@ const Products = async () => {
   const todaySpecial: Array<Product> = await todaySpecialProducts()
 
   return (
-    <div className="p-10">
+    <div className="pt-10">
       <div className="flex justify-center pb-5">
         <Suspense>
           <SearchBar />

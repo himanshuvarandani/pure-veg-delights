@@ -29,24 +29,15 @@ export default function Header() {
           </Link>
         </div>
         <div className="flex items-center space-x-2">
-          <SessionLink
-            href="/signin"
-            classNames="px-3 py-2 text-sm font-semibold"
-            sessionRequire={false}
-          >
-            Sign In
-          </SessionLink>
-          <SessionLink
+          <Link
             href="/cart"
-            classNames="mx-3 my-2 text-sm font-semibold"
-            sessionRequire={true}
+            className="mx-3 my-2 text-sm font-semibold"
           >
             <FontAwesomeIcon icon={faCartShopping} height={30} />
-          </SessionLink>
+          </Link>
           <SessionLink
             href="/account"
             classNames="px-3 py-2 text-sm font-semibold"
-            sessionRequire={true}
           >
             <FontAwesomeIcon icon={faUser} height={30} />
           </SessionLink>

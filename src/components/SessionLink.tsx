@@ -7,21 +7,17 @@ type SessionLinkProps = {
   children: React.ReactNode
   href: string
   classNames: string
-  sessionRequire: boolean
 }
 
 const SessionLink = ({
   children,
   href,
-  classNames,
-  sessionRequire
+  classNames
 }: SessionLinkProps) => {
   const { user } = useAuth()
 
-  if ((sessionRequire && !user) || (!sessionRequire && user)) return null
-
   return (
-    <Link href={href} className={classNames}>
+    <Link href={!user ? "/signin" : href} className={classNames}>
       {children}
     </Link>
   )
