@@ -1,6 +1,7 @@
 "use client"
 
 import useAuth from "@/hooks/useAuth"
+import { createOrder } from "@/firebase/order"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
@@ -21,11 +22,29 @@ const CartDetails = () => {
   }, [cart])
 
   const placeOrder = () => {
-    console.log(user)
-    
     if (!user) router.push("/signin")
 
     // Create Order with Pending payment status and redirect to Razorpay
+    createOrder({
+      userId: user?.uid!,
+      products: Object.values(cart).map(item => ({
+        product: item.product.id,
+        quantity: item.quantity,
+      })),
+      itemsPrice: total,
+      gst: 0,
+      total: total,
+      placedAt: new Date(),
+      status: "Payment Pending",
+      lastUpdated: new Date(),
+    })
+      .then(orderId => {
+        if (!orderId) console.log("Something went wrong, Please Try Again!!")
+        else {
+          console.log(orderId)
+        }
+      })
+      .catch(e => console.log("Something went wrong, Please Try Again!!"))
   }
 
   return (
@@ -67,7 +86,7 @@ const CartDetails = () => {
                 </div>
                 <div className="flex justify-between space-x-2 mt-2">
                   <h5 className="font-bold">G.S.T.</h5>
-                  <p>Rs. {total}/-</p>
+                  <p>Rs. {0}/-</p>
                 </div>
                 <hr className="mt-5" />
                 <div className="flex justify-between space-x-2 mt-2">

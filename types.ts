@@ -16,3 +16,25 @@ type Cart = {
     quantity: number
   }
 }
+
+type Order = {
+  userId: string
+  products: Array<{
+    product: string
+    quantity: number
+  }>
+  itemsPrice: number
+  gst: number
+  total: number
+  placedAt: Date
+  status:
+    "Payment Pending" |
+    "Payment Cancelled" |
+    "Payment Done" |
+    "Accepted" |
+    "Preparing" |
+    "Delivering" |
+    "Completed" |
+    "Cancelled"
+  lastUpdated: Date
+}
