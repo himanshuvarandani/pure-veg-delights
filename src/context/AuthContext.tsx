@@ -14,6 +14,8 @@ type ContextType = {
   setCart: Dispatch<SetStateAction<Cart>>
 }
 
+const initialCart = {}
+
 export const AuthContext = createContext<ContextType>({
   user: null,
   cart: {},
@@ -22,7 +24,7 @@ export const AuthContext = createContext<ContextType>({
 
 export const AuthContextProvider = ({ children }: PropsType) => {
   const [user, setUser] = useState<User | null>(null)
-  const [cart, setCart] = useState<Cart>({})
+  const [cart, setCart] = useState<Cart>(initialCart)
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged((authUser) => {
@@ -38,6 +40,7 @@ export const AuthContextProvider = ({ children }: PropsType) => {
   }, [])
 
   useEffect(() => {
+    if (cart === initialCart) return
     localStorage.setItem("cart", JSON.stringify(cart))
   }, [cart])
 
