@@ -7,7 +7,7 @@ const Services = () => {
   return (
     <div className="bg-orange-500 flex flex-col lg:flex-row justify-around sm:items-center py-20 px-5 sm:px-10 lg:px-20">
       <div className="pb-10 lg:pb-0 lg:pr-5">
-        <h3 className="text-lg text-white font-bold sm:text-xl mb-6">Services</h3>
+        <h3 className="text-lg text-white font-bold sm:text-xl mb-6">Our Services</h3>
         <div className="flex flex-col sm:flex-row space-x-0 space-y-5 sm:space-x-5 sm:space-y-0 mb-5">
           <Link
             href="/dine-in"

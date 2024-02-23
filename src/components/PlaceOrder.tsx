@@ -85,7 +85,7 @@ const PlaceOrder = () => {
           )
 
           setCart({})
-          router.push(`/order/${orderId}`)
+          router.push(`/account/order/${orderId}`)
         }
       },
       prefill: {

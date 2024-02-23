@@ -1,4 +1,4 @@
-import { addDoc, collection, doc, updateDoc } from "firebase/firestore"
+import { addDoc, collection, doc, getDoc, updateDoc } from "firebase/firestore"
 import { firestore } from "./firebase"
 
 export const createOrder = async (
@@ -28,5 +28,32 @@ export const updateOrder = async (
     return { success: true }
   } catch (e) {
     return { success: false, error: "Not able to create user, Try again!" }
+  }
+}
+
+export const fetchOrderDetails = async (
+  orderId: string,
+  userId: string,
+): Promise<{ order: Order, products: { [key: string]: Product } }| null> => {
+  const orderRef = doc(firestore, "orders", orderId)
+
+  try {
+    const result = await getDoc(orderRef)
+    const order: Order = result.data() as Order
+
+    if (order && order.userId === userId) {
+      let products: { [key: string]: Product } = {}
+      for (const item of order.products) {
+        const productRef = doc(firestore, "products", item.product)
+        const product = await getDoc(productRef)
+
+        products[item.product] = product.data() as Product
+      }
+
+      return { order: order, products }
+    }
+    return null
+  } catch (e) {
+    return null
   }
 }
