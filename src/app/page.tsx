@@ -9,7 +9,7 @@ import Link from "next/link"
 
 export default async function Home() {
   return (
-    <main className="min-h-screen">
+    <div>
       <div className="w-full flex flex-col items-center">
         <div className="relative w-full">
           <div className="absolute inset-0 -z-10">
@@ -82,6 +82,6 @@ export default async function Home() {
       </div>
 
       <Categories />
-    </main>
+    </div>
   )
 }

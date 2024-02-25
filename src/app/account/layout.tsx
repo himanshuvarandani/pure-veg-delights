@@ -1,5 +1,6 @@
 "use client"
 
+import Services from "@/components/Services";
 import useAuth from "@/hooks/useAuth";
 
 export default function AccountLayout({
@@ -11,5 +12,10 @@ export default function AccountLayout({
 
   if (!user) return null
   
-  return children
+  return (
+    <div>
+      {children}
+      <Services />
+    </div>
+  )
 }

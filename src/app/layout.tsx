@@ -21,7 +21,9 @@ export default function RootLayout({
         <body>
           <AuthContextProvider>
             <Header />
-            {children}
+            <main className="min-h-[35vh] sm:min-h-[65vh]">
+              {children}
+            </main>
             <Footer />
           </AuthContextProvider>
         </body>

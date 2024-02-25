@@ -56,7 +56,10 @@ const Order = ({ orderId }: PropsType) => {
               </h3>
               <div className="px-2 xs:px-5">
                 {order.products.map(item => (
-                  <div className="flex flex-col sm:flex-row justify-between sm:items-center space-x-2 py-3">
+                  <div
+                    key={item.product}
+                    className="flex flex-col sm:flex-row justify-between sm:items-center space-x-2 py-3"
+                  >
                     <p className="sm:w-2/3">{products[item.product].name}</p>
                     <div className="sm:w-1/3 flex justify-end items-center space-x-2 text-lg">
                       <p>Rs. {products[item.product].price}/-</p>
