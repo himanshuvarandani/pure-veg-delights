@@ -1,4 +1,4 @@
-import OrderDetails from "@/components/OrderDetails"
+import OrderDetails from "@/components/account/Order"
 import Services from "@/components/Services"
 
 const Order = ({ params }: { params: { orderId: string } }) => {

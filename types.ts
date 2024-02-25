@@ -8,6 +8,8 @@ type Product = {
   todaySpecial: boolean
 }
 
+type ProductsObject = { [key: string]: Product }
+
 type CategoryProducts = { [key: string]: Array<Product> }
 
 type Cart = {
@@ -42,3 +44,5 @@ type OrderStatus =
   "Delivering" |
   "Completed" |
   "Cancelled"
+
+type OrderWithId = { id: string } & Order
