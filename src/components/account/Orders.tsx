@@ -34,7 +34,7 @@ const Orders = () => {
       {!orders.length ? (
         <div className="flex flex-col items-center p-10">
           <p>
-            You haven't ordered till now. Go ahead and order now!!!
+            You haven&apos;t ordered till now. Go ahead and order now!!!
           </p>
           <Link
             href="/products"

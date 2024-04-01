@@ -52,3 +52,17 @@ type OrderStatus =
   "Cancelled"
 
 type OrderWithId = { id: string } & Order
+
+type Address = {
+  id?: string
+  userId: string
+  name?: string
+  addressLine1: string
+  addressLine2: string
+  pincode: number
+  city: string
+  state: string
+  active: boolean
+  default: boolean
+  createdAt: Date
+}
