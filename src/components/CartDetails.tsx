@@ -5,6 +5,7 @@ import Link from "next/link"
 import { useEffect, useState } from "react"
 import ProductCard from "./ProductCard"
 import PlaceOrder from "./PlaceOrder"
+import CartAddress from "./address/Cart"
 
 const CartDetails = () => {
   const { cart } = useAuth()
@@ -46,9 +47,10 @@ const CartDetails = () => {
               ))}
             </div>
           </div>
+          <CartAddress />
           <div className="flex flex-col items-center">
             <div className="w-full md:w-4/5 lg:w-3/5 xl:w-2/5 py-10">
-              <h3 className="text-xl text-center font-bold mb-2 text-orange-550">
+              <h3 className="text-xl text-center font-bold text-orange-550 mb-5">
                 Bill Details
               </h3>
               <div className="px-2 xs:px-5 md:px-0">

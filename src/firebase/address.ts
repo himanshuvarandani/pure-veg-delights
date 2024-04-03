@@ -9,15 +9,9 @@ import {
 } from "firebase/firestore"
 import { firestore } from "./firebase"
 
-type CreateAddResponse = {
-  success: boolean
-  data?: { addressId: string }
-  error?: string
-}
-
 export const createAddress = async (
   address: Address
-): Promise<CreateAddResponse> => {
+): Promise<APIResponse<{ addressId: string }>> => {
   const addressRef = collection(firestore, "address")
 
   try {
@@ -29,7 +23,7 @@ export const createAddress = async (
       }
     
     if (defAddRes.data && defAddRes.data.address) {
-      if (address.default) {
+      if (address.default && defAddRes.data?.address.id) {
         const remAddDefRes = await removeAddressDefault(defAddRes.data?.address.id)
         if (!remAddDefRes.success)
           return remAddDefRes
@@ -44,7 +38,9 @@ export const createAddress = async (
   }
 }
 
-export const fetchDefaultAddress = async (userId: string) => {
+export const fetchDefaultAddress = async (
+  userId: string
+): Promise<APIResponse<{ address: Address | null }>> => {
   const addressRef = collection(firestore, "address")
 
   try {
@@ -55,7 +51,15 @@ export const fetchDefaultAddress = async (userId: string) => {
     )
     const addresses = await getDocs(defAddQuery)
     if (addresses.docs.length)
-      return { success: true, data: { address: addresses.docs[0] } }
+      return {
+        success: true,
+        data: {
+          address: {
+            ...addresses.docs[0].data() as Address,
+            id: addresses.docs[0].id,
+          }
+        }
+      }
     
     return { success: true, data: { address: null }}
   } catch(e) {
@@ -76,5 +80,28 @@ export const removeAddressDefault = async (addressId: string) => {
       success: false,
       error: "Not able to update default address, Try again!"
     }
+  }
+}
+
+export const fetchAllAddresses = async (
+  userId: string
+): Promise<APIResponse<{ addresses: Address[] }>> => {
+  const addressRef = collection(firestore, "address")
+
+  try {
+    const defAddQuery = query(
+      addressRef,
+      where("userId", '==', userId),
+    )
+    const result = await getDocs(defAddQuery)
+    let addresses: Address[] = result.docs.map(doc => ({
+      ...doc.data(),
+      id: doc.id,
+    } as Address))
+    
+    return { success: true, data: { addresses: addresses }}
+  } catch(e) {
+    console.log(e)
+    return { success: false, error: "Not able to fetch default address, Try again!" }
   }
 }

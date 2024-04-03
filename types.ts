@@ -1,3 +1,9 @@
+type APIResponse<T> = {
+  success: boolean
+  data?: T
+  error?: string
+}
+
 type User = {
   name: string
   email: string
