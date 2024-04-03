@@ -1,11 +1,11 @@
 "use client"
 
+import ProductCard from "@/components/product/Card"
 import useAuth from "@/hooks/useAuth"
 import Link from "next/link"
 import { useEffect, useState } from "react"
-import ProductCard from "./ProductCard"
 import PlaceOrder from "./PlaceOrder"
-import CartAddress from "./address/Cart"
+import CartAddress from "./CartAddress"
 
 const CartDetails = () => {
   const { cart } = useAuth()

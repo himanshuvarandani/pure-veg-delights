@@ -1,5 +1,5 @@
 import { todaySpecialProducts } from "@/firebase/products"
-import ProductsList from "./ProductsList"
+import ProductsList from "./List"
 
 type PropsType = {
   theme: "white" | "orange"

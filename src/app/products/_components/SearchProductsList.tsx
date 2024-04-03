@@ -1,9 +1,9 @@
 "use client"
 
+import ProductsList from "@/components/products/List"
 import { searchProducts } from "@/firebase/products"
 import { useSearchParams } from "next/navigation"
 import { useEffect, useState } from "react"
-import ProductsList from "./ProductsList"
 
 const SearchProductsList = () => {
   const searchParams = useSearchParams()

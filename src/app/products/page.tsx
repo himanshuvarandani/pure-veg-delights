@@ -1,8 +1,8 @@
-import SearchBar from "@/components/SearchBar"
-import SearchProductsList from "@/components/SearchProductsList"
-import TodaySpecial from "@/components/TodaySpecial"
+import TodaySpecial from "@/components/products/TodaySpecial"
 import { todaySpecialProducts } from "@/firebase/products"
 import { Suspense } from "react"
+import SearchBar from "./_components/SearchBar"
+import SearchProductsList from "./_components/SearchProductsList"
 
 const Products = async () => {
   const todaySpecial: Array<Product> = await todaySpecialProducts()

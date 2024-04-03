@@ -1,5 +1,5 @@
-import CartDetails from "@/components/CartDetails"
-import TodaySpecial from "@/components/TodaySpecial"
+import TodaySpecial from "@/components/products/TodaySpecial"
+import CartDetails from "./_components/CartDetails"
 
 const Cart = () => {
   return (
