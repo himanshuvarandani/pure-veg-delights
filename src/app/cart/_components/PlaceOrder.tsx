@@ -5,14 +5,18 @@ import useAuth from "@/hooks/useAuth"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 
-const PlaceOrder = () => {
+const PlaceOrder = ({ address }: { address: Address | null }) => {
   const { user, cart, setCart } = useAuth()
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
 
   const placeOrder = async () => {
+    if (isLoading || !address) return
+
     setIsLoading(true)
     if (!user) router.push("/signin")
+
+    if (!Object.keys(cart).length) alert("Please add some products to cart.")
 
     let total = 0
     let products: Array<{
@@ -27,15 +31,20 @@ const PlaceOrder = () => {
       total += item.product.price * item.quantity
     })
 
+    // Create gst and itemsPrice
+    let gst = 0
+    let itemsPrice = total
+
     // Create Order with Pending payment status and redirect to Razorpay
     const orderId = await createOrder({
       userId: user?.uid!,
-      products: products,
-      itemsPrice: total,
-      gst: 0,
-      total: total,
-      placedAt: new Date(),
+      products,
+      address,
+      itemsPrice,
+      gst,
+      total,
       status: "Payment Pending",
+      placedAt: new Date(),
       lastUpdated: new Date(),
     })
     
@@ -96,8 +105,9 @@ const PlaceOrder = () => {
     const paymentObject = new (window as any).Razorpay(options)
     paymentObject.open()
 
-    paymentObject.on("payment.failed", function (response: any) {
+    paymentObject.on("payment.failed", async (response: any) => {
       alert("Payment failed. Please try again.")
+      await updateOrder(orderId, "Payment Cancelled")
       setIsLoading(false)
     })
   }
@@ -105,7 +115,7 @@ const PlaceOrder = () => {
   return (
     <button
       className={`rounded-2xl bg-orange-550 text-white px-4 py-2 my-5
-        ${isLoading ? "opacity-20" : null }
+        ${isLoading || !address ? "opacity-20" : null }
       `}
       onClick={placeOrder}
       disabled={isLoading}

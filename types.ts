@@ -40,6 +40,7 @@ type Order = {
   itemsPrice: number
   gst: number
   total: number
+  address: Address
   placedAt: Date
   status: OrderStatus
   lastUpdated: Date

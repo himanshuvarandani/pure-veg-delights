@@ -1,13 +1,29 @@
-import { Timestamp, addDoc, collection, doc, getCountFromServer, getDoc, getDocs, limit, orderBy, query, startAfter, updateDoc, where } from "firebase/firestore"
+import {
+  addDoc,
+  collection,
+  doc,
+  getCountFromServer,
+  getDoc,
+  getDocs,
+  limit,
+  orderBy,
+  query,
+  startAfter,
+  updateDoc,
+  where
+} from "firebase/firestore"
 import { firestore } from "./firebase"
 
-export const createOrder = async (
-  order: Order
-) => {
+export const createOrder = async (order: Order) => {
   const orderRef = collection(firestore, "orders")
 
   try {
-    const result = await addDoc(orderRef, order)
+    const result = await addDoc(orderRef, {
+      ...order,
+      status: "Payment Pending",
+      placedAt: new Date(),
+      updateAt: new Date(),
+    })
     return result.id
   } catch(e) {
     console.log(e)

@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import useAuth from "@/hooks/useAuth"
 import Link from "next/link"
 import { useEffect, useState } from "react"
+import AddressCard from "../address/Card"
 
 type PropsType = { orderId: string }
 
@@ -68,6 +69,18 @@ const Order = ({ orderId }: PropsType) => {
                     </div>
                   </div>
                 ))}
+              </div>
+            </div>
+            <div className="py-5">
+              <h3 className="text-xl font-bold mb-2 text-orange-550">
+                Address
+              </h3>
+              <div className="w-full sm:w-3/4">
+                <AddressCard
+                  address={order.address}
+                  deletable={false}
+                  editable={false}
+                />
               </div>
             </div>
             <div className="py-5">

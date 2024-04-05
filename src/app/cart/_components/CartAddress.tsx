@@ -9,9 +9,13 @@ import Link from "next/link"
 import { useEffect, useState } from "react"
 import ChangeAddressModal from "./ChangeAddress"
 
-const CartAddress = () => {
+type CartAddressProps = {
+  address: Address | null
+  updateAddress: (address: Address | null) => void
+}
+
+const CartAddress = ({ address, updateAddress }: CartAddressProps) => {
   const { user } = useAuth()
-  const [address, setAddress] = useState<Address | null>(null)
   const [allAddresses, setAllAddresses] = useState<Address[]>([])
   const [showModal, setShowModal] = useState(false)
 
@@ -19,7 +23,7 @@ const CartAddress = () => {
     fetchDefaultAddress(user?.uid!)
       .then(response => {
         if (response.success && response.data)
-          setAddress(response.data?.address)
+          updateAddress(response.data?.address)
       })
       .catch(() => console.log("Error while fetching default address"))
     
@@ -84,7 +88,7 @@ const CartAddress = () => {
         showModal={showModal}
         closeModal={() => setShowModal(false)}
         updateAddress={(address: Address) => {
-          setAddress(address)
+          updateAddress(address)
           setShowModal(false)
         }}
       />

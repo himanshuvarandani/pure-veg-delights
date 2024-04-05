@@ -10,6 +10,7 @@ import CartAddress from "./CartAddress"
 const CartDetails = () => {
   const { cart } = useAuth()
   const [total, setTotal] = useState<number>(0)
+  const [address, setAddress] = useState<Address | null>(null)
 
   useEffect(() => {
     let itemTotal = 0
@@ -47,7 +48,10 @@ const CartDetails = () => {
               ))}
             </div>
           </div>
-          <CartAddress />
+          <CartAddress
+            address={address}
+            updateAddress={(address: Address | null) => setAddress(address)}
+          />
           <div className="flex flex-col items-center">
             <div className="w-full md:w-4/5 lg:w-3/5 xl:w-2/5 py-10">
               <h3 className="text-xl text-center font-bold text-orange-550 mb-5">
@@ -69,7 +73,7 @@ const CartDetails = () => {
                 </div>
               </div>
             </div>
-            <PlaceOrder />
+            <PlaceOrder address={address} />
           </div>
         </>
       )}
