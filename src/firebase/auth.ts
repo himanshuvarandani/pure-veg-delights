@@ -6,14 +6,17 @@ import {
   signInWithEmailAndPassword
 } from "firebase/auth"
 import { auth } from "./firebase"
+import { createUser } from "./user"
 
 export const signUp = async (
+  name: string,
+  contact: number,
   email: string,
   password: string
-): Promise<{ success: boolean, userId?: string, error?: string}> => {
+): Promise<APIResponse<null>> => {
   try {
     const result = await createUserWithEmailAndPassword(auth, email, password)
-    return { success: true, userId: result.user.uid }
+    return await createUser(result.user.uid, name, contact, email)
   } catch (error: any) {
     let message = "Error during sign up, Try Again!"
     if (error) {
@@ -34,7 +37,7 @@ export const signUp = async (
 export const signIn = async (
   email: string,
   password: string
-): Promise<{ success: boolean, error?: string}> => {
+): Promise<APIResponse<null>> => {
   try {
     await signInWithEmailAndPassword(auth, email, password)
     return { success: true }

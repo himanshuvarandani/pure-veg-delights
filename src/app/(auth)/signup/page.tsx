@@ -1,7 +1,6 @@
 "use client"
 
 import { signUp } from "@/firebase/auth"
-import { createUser } from "@/firebase/user"
 import Link from "next/link"
 import { redirect } from "next/navigation"
 import { useState } from "react"
@@ -37,23 +36,12 @@ const SignUp = () => {
     if (details.password !== details.confirmPassword)
       setError("Password do not match")
 
-    signUp(details.email, details.password)
+    signUp(details.name, details.contact, details.email, details.password)
       .then((response) => {
         if (response.success) {
-          createUser(
-            response.userId!,
-            details.name,
-            details.contact,
-            details.email,
-          )
-            .then((result) => {
-              if (result.success) {
-                redirect("/")
-              }
-              setError(result.error!)
-            })
-            .catch((e) => setError("Not able to sign in, Try Again!"))
-        } else setError(response.error!)
+          redirect("/")
+        }
+        setError(response.error!)
       })
       .catch((e) => setError("Not able to sign in, Try Again!"))
   }
