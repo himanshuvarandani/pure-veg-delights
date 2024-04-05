@@ -1,9 +1,9 @@
 "use client"
 
-import { createAddress } from "@/firebase/address"
+import { fetchAddressById, updateAddress } from "@/firebase/address"
 import useAuth from "@/hooks/useAuth"
 import { useRouter } from "next/navigation"
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 
 const initialAddress: Address = {
   userId: "",
@@ -17,11 +17,26 @@ const initialAddress: Address = {
   createdAt: new Date(),
 }
 
-const NewAddress = () => {
+const NewAddress = ({ params }: { params: { id: string } }) => {
   const { user } = useAuth()
   const [address, setAddress] = useState<Address>(initialAddress)
   const [error, setError] = useState("")
   const router = useRouter()
+
+  useEffect(() => {
+    fetchAddressById(user?.uid!, params.id)
+      .then(response => {
+        console.log(response)
+        
+        if (response.success && response.data && response.data?.address !== null) {
+          setAddress(response.data?.address)
+        } else router.push("/404")
+      })
+      .catch(() => {
+        console.log("Error while fetching address details")
+        router.push("/404")
+      })
+  }, [user, params])
 
   const handleCredentials = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, type, value, checked } = e.target
@@ -38,11 +53,7 @@ const NewAddress = () => {
   const onSubmit = (e: any) => {
     e.preventDefault()
 
-    createAddress({
-      ...address,
-      userId: user?.uid!,
-      createdAt: new Date(),
-    })
+    updateAddress(user?.uid!, address)
       .then((response) => {
         if (response.success && response.data)
           router.push(`/account/address/${response.data.addressId}`)
@@ -58,13 +69,14 @@ const NewAddress = () => {
         onSubmit={onSubmit}
         className="w-full md:w-3/4 lg:w-1/2 xl:w-2/5 border-2 border-yellow-500 rounded-xl flex flex-col space-y-5 p-5 sm:px-10"
       >
-        <p className="text-center text-lg text-orange-550 font-bold">Add New Address</p>
+        <p className="text-center text-lg text-orange-550 font-bold">Update Address</p>
         <div className="flex flex-col space-y-1">
           <label htmlFor="addressLine1">Address Line 1 *</label>
           <input
             name="addressLine1"
             type="text"
             placeholder="Enter your room no and building name"
+            value={address.addressLine1}
             required
             className="border-2 rounded-xl text-sm py-2 px-4"
             onChange={handleCredentials}
@@ -76,6 +88,7 @@ const NewAddress = () => {
             name="addressLine2"
             type="text"
             placeholder="Enter your area name"
+            value={address.addressLine2}
             className="border-2 rounded-xl text-sm py-2 px-4"
             onChange={handleCredentials}
           />
@@ -86,6 +99,7 @@ const NewAddress = () => {
             name="pincode"
             type="number"
             placeholder="Enter your area pincode"
+            value={address.pincode}
             required
             className="border-2 rounded-xl text-sm py-2 px-4 [&::-webkit-inner-spin-button]:appearance-none"
             onChange={handleCredentials}
@@ -98,6 +112,7 @@ const NewAddress = () => {
             name="city"
             type="text"
             placeholder="Enter your city name"
+            value={address.city}
             required
             className="border-2 rounded-xl text-sm py-2 px-4"
             onChange={handleCredentials}
@@ -109,6 +124,7 @@ const NewAddress = () => {
             name="state"
             type="text"
             placeholder="Enter state name"
+            value={address.state}
             required
             className="border-2 rounded-xl text-sm py-2 px-4"
             onChange={handleCredentials}
@@ -119,20 +135,13 @@ const NewAddress = () => {
             Address Name <span className="text-xs">(for reference)</span>
           </label>
           <input
-            name="state"
+            name="name"
             type="text"
             placeholder="Enter address name for reference"
+            value={address.name}
             className="border-2 rounded-xl text-sm py-2 px-4"
             onChange={handleCredentials}
           />
-        </div>
-        <div className="flex space-x-1">
-          <input
-            name="default"
-            type="checkbox"
-            onChange={handleCredentials}
-          />
-          <label htmlFor="default">Make this as default address</label>
         </div>
         {error ? (
           <p className="text-center text-red-500 tex-sm my-3">
@@ -140,8 +149,10 @@ const NewAddress = () => {
           </p>
         ) : null}
         <div className="text-center text-sm">
-          <button className="w-full rounded-2xl bg-orange-550 text-lg px-4 py-2 mb-2">
-            Create
+          <button
+            className="w-full rounded-2xl bg-orange-550 text-lg px-4 py-2 mb-2"
+          >
+            Update
           </button>
         </div>
       </form>

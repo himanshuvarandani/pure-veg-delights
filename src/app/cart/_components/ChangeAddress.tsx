@@ -17,7 +17,7 @@ const ChangeAddressModal = ({
   
   return (
     <div
-      className="fixed top-0 left-0 w-full h-full bg-gray-500 bg-opacity-50 flex justify-center items-center"
+      className="fixed top-0 left-0 z-10 w-full h-full bg-gray-500 bg-opacity-50 flex justify-center items-center"
       onClick={closeModal}
     >
       <div
@@ -25,12 +25,13 @@ const ChangeAddressModal = ({
         onClick={(e) => e.stopPropagation()}
       >
         <div
-          className="flex flex-col items-center max-h-[90vh] overflow-auto border-2 border-orange-550 bg-white rounded-xl shadow-xl p-5"
+          className="max-h-[90vh] overflow-auto border-2 border-orange-550 bg-white rounded-xl shadow-2xl p-5"
         >
           <h3 className="text-lg text-center text-orange-550 font-bold mb-5">Select Address</h3>
           {addresses.map(address => (
             <div
-              className="my-2 cursor-pointer"
+              key={address.id}
+              className="w-full my-4 cursor-pointer"
               onClick={() => updateAddress(address)}
             >
               <AddressCard address={address} deletable={false} editable={false} />

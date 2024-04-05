@@ -1,17 +1,38 @@
+import { updateDefaultAddress } from "@/firebase/address"
+import useAuth from "@/hooks/useAuth"
 import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import Link from "next/link"
+import { useState } from "react"
 
-type AddCardProps = { address: Address, deletable: boolean, editable: boolean }
+type AddCardProps = {
+  address: Address,
+  deletable: boolean,
+  editable: boolean,
+  defAddButtonDisable?: boolean,
+  updateDefAddress?: (addressId: string) => void
+}
 
-const AddressCard = ({ address, deletable, editable }: AddCardProps) => {
+const AddressCard = ({
+  address,
+  deletable,
+  editable,
+  defAddButtonDisable,
+  updateDefAddress
+}: AddCardProps) => {
+
   return (
     <div
-      className="w-full border-2 border-yellow-500 rounded-xl shadow-lg py-4 px-6"
+      className="w-full border-2 border-yellow-500 rounded-xl shadow py-4 px-6"
     >
       <div className="flex justify-between items-center">
-        <p className="font-bold">{!address.name? "Other" : address.name}</p>
-        <div className="flex text-orange-550">
+        <p className="font-bold">
+          {!address.name? "Other" : address.name}
+          {!address.default ? null : (
+            <span className="text-xs text-orange-550 font-normal ml-2 pb-1">(Default)</span>
+          )}
+        </p>
+        <div className="flex items-center text-orange-550">
           {!editable ? null : (
             <Link href={`/account/address/${address.id}`}>
               <FontAwesomeIcon
@@ -30,12 +51,23 @@ const AddressCard = ({ address, deletable, editable }: AddCardProps) => {
           )}
         </div>
       </div>
+
       <div>
         <p className="break-words px-2">
           {address.addressLine1}, {address.addressLine2}, {address.city},
           {address.state} - {address.pincode}
         </p>
       </div>
+
+      {!editable || address.default || !updateDefAddress ? null : (
+        <button
+          className="text-xs text-yellow-500 mt-3"
+          disabled={defAddButtonDisable}
+          onClick={() => updateDefAddress(address.id!)}
+        >
+          Make this as Default address
+        </button>
+      )}
     </div>
   )
 }

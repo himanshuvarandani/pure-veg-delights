@@ -58,16 +58,24 @@ const CartAddress = () => {
             ) : null}
           </div>
         </div>
-        <div className="flex flex-col items-center">
-          <div className="w-3/4">
-            {!address ? null : (
+        <div className="flex flex-col items-center px-2 xs:px-5 md:px-0">
+          {!address ? (
+            <Link href="/account/address/new">
+              <button
+                className="rounded-2xl bg-orange-550 text-white px-4 py-2"
+              >
+                Add New Address
+              </button>
+            </Link>
+          ) : (
+            <div className="w-full sm:w-3/4">
               <AddressCard
                 address={address}
                 deletable={false}
                 editable={true}
               />
-            )}
-          </div>
+            </div>
+          )}
         </div>
       </div>
 
