@@ -18,12 +18,10 @@ const Orders = () => {
   useEffect(() => {
     fetchUserOrders(user?.uid!, page, pageSize)
       .then(response => {
-        console.log(response)
-        
-        if (response) {
-          setOrders(response.orders)
-          setProducts(response.products)
-          setTotalPages(response.totalPages)
+        if (response.success && response.data) {
+          setOrders(response.data.orders)
+          setProducts(response.data.products)
+          setTotalPages(response.data.totalPages)
         }
       })
       .catch(() => console.log("Error while fetching order details"))

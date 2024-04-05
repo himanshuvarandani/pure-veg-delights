@@ -14,7 +14,9 @@ import {
 } from "firebase/firestore"
 import { firestore } from "./firebase"
 
-export const createOrder = async (order: Order) => {
+export const createOrder = async (
+  order: Order
+): Promise<APIResponse<{ orderId: string }>> => {
   const orderRef = collection(firestore, "orders")
 
   try {
@@ -24,19 +26,19 @@ export const createOrder = async (order: Order) => {
       placedAt: new Date(),
       updateAt: new Date(),
     })
-    return result.id
+    return { success: true, data: { orderId: result.id } }
   } catch(e) {
     console.log(e)
-    return null
+    return { success: false, error: "Not able to create order, Try Again!" }
   }
 }
 
-export const updateOrder = async (
+export const updatePaymentDetails = async (
   orderId: string,
   status: OrderStatus,
   razorpayOrderId: string = "",
   razorpayPaymentId: string = "",
-): Promise<{ success: boolean, error?: string}> => {
+): Promise<APIResponse<null>> => {
   const orderRef = doc(firestore, "orders", orderId)
 
   try {
@@ -50,7 +52,7 @@ export const updateOrder = async (
 export const fetchOrderDetails = async (
   orderId: string,
   userId: string,
-): Promise<{ order: Order, products: ProductsObject } | null> => {
+): Promise<APIResponse<{ order: Order, products: ProductsObject }>> => {
   const orderRef = doc(firestore, "orders", orderId)
 
   try {
@@ -74,12 +76,17 @@ export const fetchOrderDetails = async (
         const productObjectsArray: Array<ProductsObject> = await Promise.all(promises)
         const products: ProductsObject = Object.assign({}, ...productObjectsArray)
 
-        return { order, products }
+        return { success: true, data: { order, products } }
       }
+
+      return { success: false, error: "Wrong order id" }
     }
-    return null
+    return { success: false, error: "No data available for this order id" }
   } catch (e) {
-    return null
+    return {
+      success: false,
+      error: "Not able to fetch order details, Try Again!"
+    }
   }
 }
 
@@ -87,13 +94,12 @@ export const fetchUserOrders = async (
   userId: string,
   page: number = 1,
   pageSize: number = 10,
-): Promise<{
-    orders: Array<OrderWithId>,
-    products: ProductsObject,
-    totalOrders: number,
-    totalPages: number,
-  } | null
-> => {
+): Promise<APIResponse<{
+  orders: Array<OrderWithId>,
+  products: ProductsObject,
+  totalOrders: number,
+  totalPages: number,
+}>> => {
   const ordersRef = collection(firestore, "orders")
 
   try {
@@ -169,8 +175,8 @@ export const fetchUserOrders = async (
     }
 
     const result = await Promise.all([p1(), p2()])
-    return Object.assign({}, ...result)
+    return { success: true, data: Object.assign({}, ...result) }
   } catch (e) {
-    return null
+    return { success: false, error: "Not able to fetch orders, Try Again!" }
   }
 }

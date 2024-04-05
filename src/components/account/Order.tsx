@@ -18,9 +18,9 @@ const Order = ({ orderId }: PropsType) => {
   useEffect(() => {
     fetchOrderDetails(orderId, user?.uid!)
       .then(response => {
-        if (response) {
-          setOrder(response.order)
-          setProducts(response.products)
+        if (response.success && response.data) {
+          setOrder(response.data?.order)
+          setProducts(response.data?.products)
         }
       })
       .catch(() => console.log("Error while fetching order details"))

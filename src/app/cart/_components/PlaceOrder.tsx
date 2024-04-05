@@ -1,6 +1,6 @@
 "use client"
 
-import { createOrder, updateOrder } from "@/firebase/order"
+import { createOrder, updatePaymentDetails } from "@/firebase/order"
 import useAuth from "@/hooks/useAuth"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
@@ -36,7 +36,7 @@ const PlaceOrder = ({ address }: { address: Address | null }) => {
     let itemsPrice = total
 
     // Create Order with Pending payment status and redirect to Razorpay
-    const orderId = await createOrder({
+    const response = await createOrder({
       userId: user?.uid!,
       products,
       address,
@@ -48,9 +48,10 @@ const PlaceOrder = ({ address }: { address: Address | null }) => {
       lastUpdated: new Date(),
     })
     
-    if (!orderId) console.log("Something went wrong, Please Try Again!!")
+    if (!response.success || !response.data || !response.data.orderId)
+      console.log("Something went wrong, Please Try Again!!")
     else {
-      await makePayment(orderId, total)
+      await makePayment(response.data.orderId, total)
     }
   }
 
@@ -67,7 +68,7 @@ const PlaceOrder = ({ address }: { address: Address | null }) => {
       order_id: razorpayOrder.id,
       modal: {
         ondismiss: async () => {
-          await updateOrder(orderId, "Payment Cancelled")
+          await updatePaymentDetails(orderId, "Payment Cancelled")
           setIsLoading(false)
         },
       },
@@ -83,10 +84,10 @@ const PlaceOrder = ({ address }: { address: Address | null }) => {
 
         const res = await data.json()
         if (!res?.success) {
-          await updateOrder(orderId, "Payment Cancelled")
+          await updatePaymentDetails(orderId, "Payment Cancelled")
           setIsLoading(false)
         } else {
-          await updateOrder(
+          await updatePaymentDetails(
             orderId,
             "Payment Done",
             response.razorpay_order_id,
@@ -107,7 +108,7 @@ const PlaceOrder = ({ address }: { address: Address | null }) => {
 
     paymentObject.on("payment.failed", async (response: any) => {
       alert("Payment failed. Please try again.")
-      await updateOrder(orderId, "Payment Cancelled")
+      await updatePaymentDetails(orderId, "Payment Cancelled")
       setIsLoading(false)
     })
   }
