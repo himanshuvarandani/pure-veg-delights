@@ -30,7 +30,11 @@ const AccountDetails = () => {
     e.preventDefault()
 
     updateUser(user?.uid!, userDetails.name, userDetails.contact)
-      .then(() => console.log("Updated Details"))
+      .then(response => {
+        if (response.success)
+          alert("Updated Details")
+        console.log("Not able to update details. Try Again!")
+      })
       .catch(() => console.log("Not able to update details. Try Again!"))
   }
 

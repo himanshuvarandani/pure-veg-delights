@@ -83,7 +83,7 @@ export const fetchAllAddresses = async (
     const defAddQuery = query(
       addressRef,
       where("userId", '==', userId),
-      orderBy("updatedAt"),
+      orderBy("updatedAt", "desc"),
     )
     const result = await getDocs(defAddQuery)
     let addresses: Address[] = result.docs.map(doc => ({
@@ -94,7 +94,10 @@ export const fetchAllAddresses = async (
     return { success: true, data: { addresses: addresses }}
   } catch(e) {
     console.log(e)
-    return { success: false, error: "Not able to fetch default address, Try again!" }
+    return {
+      success: false,
+      error: "Not able to fetch all user address, Try again!"
+    }
   }
 }
 

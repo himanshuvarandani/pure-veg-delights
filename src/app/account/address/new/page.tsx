@@ -114,11 +114,11 @@ const NewAddress = () => {
           />
         </div>
         <div className="flex flex-col space-y-1">
-          <label htmlFor="state">
+          <label htmlFor="name">
             Address Name <span className="text-xs">(for reference)</span>
           </label>
           <input
-            name="state"
+            name="name"
             type="text"
             placeholder="Enter address name for reference"
             className="border-2 rounded-xl text-sm py-2 px-4"
