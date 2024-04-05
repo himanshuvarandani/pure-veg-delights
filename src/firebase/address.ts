@@ -1,9 +1,11 @@
 import {
   addDoc,
   collection,
+  deleteDoc,
   doc,
   getDoc,
   getDocs,
+  orderBy,
   query,
   updateDoc,
   where
@@ -25,16 +27,16 @@ export const createAddress = async (
     
     if (defAddRes.data && defAddRes.data.address) {
       if (address.default && defAddRes.data?.address.id) {
-        const remAddDefRes = await removeAddressDefault(defAddRes.data?.address.id)
-        if (!remAddDefRes.success)
-          return remAddDefRes
+        const defAddRef = doc(firestore, "address", defAddRes.data.address.id)
+        await updateDoc(defAddRef, { default: false })
       }
     } else address.default = true
 
-    const result = await addDoc(
-      addressRef,
-      { ...address, createdAt: new Date() }
-    )
+    const result = await addDoc(addressRef, {
+      ...address,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    })
     return { success: true, data: { addressId: result.id } }
   } catch(e) {
     console.log(e)
@@ -52,7 +54,6 @@ export const fetchDefaultAddress = async (
       addressRef,
       where("userId", '==', userId),
       where("default", '==', true),
-      where("active", '==', true),
     )
     const addresses = await getDocs(defAddQuery)
     if (addresses.docs.length)
@@ -73,21 +74,6 @@ export const fetchDefaultAddress = async (
   }
 }
 
-const removeAddressDefault = async (addressId: string) => {
-  const addressRef = doc(firestore, "address", addressId)
-
-  try {
-    await updateDoc(addressRef, { default: false })
-    return { success: true }
-  } catch(e) {
-    console.log(e)
-    return {
-      success: false,
-      error: "Not able to update default address, Try again!"
-    }
-  }
-}
-
 export const fetchAllAddresses = async (
   userId: string
 ): Promise<APIResponse<{ addresses: Address[] }>> => {
@@ -97,7 +83,7 @@ export const fetchAllAddresses = async (
     const defAddQuery = query(
       addressRef,
       where("userId", '==', userId),
-      where("active", '==', true),
+      orderBy("updatedAt"),
     )
     const result = await getDocs(defAddQuery)
     let addresses: Address[] = result.docs.map(doc => ({
@@ -117,24 +103,26 @@ export const updateDefaultAddress = async (
   newDefAddId: string
 ): Promise<APIResponse<null>> => {
   const addressRef = doc(firestore, "address", newDefAddId)
-  const failResponse = {
-    success: false,
-    error: "Not able to update default address, Try again!"
-  }
 
   try {
     const result = await fetchDefaultAddress(userId)
-    if (!result.success) return failResponse
-    if (result.data?.address && result.data?.address.id) {
-      const removeResult = await removeAddressDefault(result.data?.address.id)
-      if (!removeResult.success) return failResponse
+    if (!result.success) return {
+      success: false,
+      error: result.error
+    }
+    if (result.data?.address && result.data.address.id) {
+      const defAddRef = doc(firestore, "address", result.data.address.id)
+      await updateDoc(defAddRef, { default: false })
     }
 
     await updateDoc(addressRef, { default: true })
     return { success: true }
   } catch(e) {
     console.log(e)
-    return failResponse
+    return {
+      success: false,
+      error: "Not able to update default address, Try again!"
+    }
   }
 }
 
@@ -159,7 +147,7 @@ export const fetchAddressById = async (
     console.log(e)
     return {
       success: false,
-      error: "Not able to update default address, Try again!"
+      error: "Not able to fetch address details, Try again!"
     }
   }
 }
@@ -167,26 +155,60 @@ export const fetchAddressById = async (
 export const updateAddress = async (
   userId: string,
   address: Address
-): Promise<APIResponse<{ addressId: string }>> => {
-  const failResponse = {
-    success: false,
-    error: "Not able to update address details, Try again!"
-  }
+): Promise<APIResponse<null>> => {
   const { id, ...addressDetails } = address
-  if (!id) return failResponse
+  if (!id) return {
+    success: false,
+    error: "Not able to update address details, Try again!",
+  }
   const addressRef = doc(firestore, "address", id)
 
   try {
     const result = await fetchAddressById(userId, id)
-    if (!result.data?.address) return failResponse
+    if (!result.data?.address) return {
+      success: false,
+      error: "Wrong address details provided, Try again!"
+    }
 
-    await updateDoc(addressRef, { active: false, default: false })
-    return await createAddress(addressDetails)
+    await updateDoc(addressRef, {
+      ...addressDetails,
+      updateAt: new Date(),
+    })
+    return { success: true }
   } catch(e) {
     console.log(e)
     return {
       success: false,
-      error: "Not able to update default address, Try again!"
+      error: "Not able to update address details, Try again!"
+    }
+  }
+}
+
+
+export const deleteAddress = async (
+  userId: string,
+  addressId: string
+): Promise<APIResponse<null>> => {
+  if (!addressId) return {
+    success: false,
+    error: "No address details provided, Try again!"
+  }
+  const addressRef = doc(firestore, "address", addressId)
+
+  try {
+    const result = await fetchAddressById(userId, addressId)
+    if (!result.data?.address) return {
+      success: false,
+      error: "Wrong address details provided, Try again!"
+    }
+
+    await deleteDoc(addressRef)
+    return { success: true }
+  } catch(e) {
+    console.log(e)
+    return {
+      success: false,
+      error: "Not able to delete default address, Try again!"
     }
   }
 }

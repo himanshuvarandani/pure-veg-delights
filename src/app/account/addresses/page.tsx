@@ -1,7 +1,7 @@
 "use client"
 
 import AddressCard from "@/components/address/Card"
-import { fetchAllAddresses, updateDefaultAddress } from "@/firebase/address"
+import { deleteAddress, fetchAllAddresses, updateDefaultAddress } from "@/firebase/address"
 import useAuth from "@/hooks/useAuth"
 import Link from "next/link"
 import { useEffect, useState } from "react"
@@ -27,6 +27,18 @@ const Addresses = () => {
 
     setLoading(true)
     updateDefaultAddress(user?.uid!, addressId)
+      .then(response => {
+        if (!response.success) alert(response.error)
+      })
+      .catch(() => console.log("Error while updating default address"))
+      .finally(() => setLoading(false))
+  }
+  
+  const deleteAddressDoc = (addressId: string) => {
+    if (loading) return
+
+    setLoading(true)
+    deleteAddress(user?.uid!, addressId)
       .then(response => {
         if (!response.success) alert(response.error)
       })
@@ -64,6 +76,7 @@ const Addresses = () => {
                 editable={true}
                 defAddButtonDisable={loading}
                 updateDefAddress={updateDefAddress}
+                deleteAddress={deleteAddressDoc}
               />
             </div>
           ))}

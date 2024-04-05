@@ -12,9 +12,9 @@ const initialAddress: Address = {
   pincode: 0,
   city: "",
   state: "",
-  active: true,
   default: false,
   createdAt: new Date(),
+  updatedAt: new Date(),
 }
 
 const NewAddress = ({ params }: { params: { id: string } }) => {
@@ -55,8 +55,8 @@ const NewAddress = ({ params }: { params: { id: string } }) => {
 
     updateAddress(user?.uid!, address)
       .then((response) => {
-        if (response.success && response.data)
-          router.push(`/account/address/${response.data.addressId}`)
+        if (response.success)
+          alert("Address Updated")
 
         setError(response.error!)
       })

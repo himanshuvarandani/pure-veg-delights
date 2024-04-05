@@ -12,9 +12,9 @@ const initialAddress: Address = {
   pincode: 0,
   city: "",
   state: "",
-  active: true,
   default: false,
   createdAt: new Date(),
+  updatedAt: new Date(),
 }
 
 const NewAddress = () => {
@@ -41,7 +41,6 @@ const NewAddress = () => {
     createAddress({
       ...address,
       userId: user?.uid!,
-      createdAt: new Date(),
     })
       .then((response) => {
         if (response.success && response.data)

@@ -68,7 +68,7 @@ type Address = {
   pincode: number
   city: string
   state: string
-  active: boolean
   default: boolean
   createdAt: Date
+  updatedAt: Date
 }

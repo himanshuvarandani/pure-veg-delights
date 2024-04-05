@@ -1,16 +1,14 @@
-import { updateDefaultAddress } from "@/firebase/address"
-import useAuth from "@/hooks/useAuth"
 import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import Link from "next/link"
-import { useState } from "react"
 
 type AddCardProps = {
-  address: Address,
-  deletable: boolean,
-  editable: boolean,
-  defAddButtonDisable?: boolean,
+  address: Address
+  deletable: boolean
+  editable: boolean
+  defAddButtonDisable?: boolean
   updateDefAddress?: (addressId: string) => void
+  deleteAddress?: (addressId: string) => void
 }
 
 const AddressCard = ({
@@ -18,9 +16,9 @@ const AddressCard = ({
   deletable,
   editable,
   defAddButtonDisable,
-  updateDefAddress
+  updateDefAddress,
+  deleteAddress,
 }: AddCardProps) => {
-
   return (
     <div
       className="w-full border-2 border-yellow-500 rounded-xl shadow py-4 px-6"
@@ -42,11 +40,12 @@ const AddressCard = ({
               />
             </Link>
           )}
-          {!deletable ? null : (
+          {!deletable || !deleteAddress ? null : (
             <FontAwesomeIcon
               icon={faTrash}
               size="sm"
               className="cursor-pointer ml-4"
+              onClick={() => deleteAddress(address.id!)}
             />
           )}
         </div>
