@@ -6,7 +6,7 @@ export const createUser = async (
   name: string,
   contact: number,
   email: string,
-): Promise<{ success: boolean, error?: string}> => {
+): Promise<APIResponse<null>> => {
   const userRef = doc(firestore, "users", userId)
 
   try {
@@ -17,14 +17,16 @@ export const createUser = async (
   }
 }
 
-export const fetchUserDetails = async (userId: string): Promise<User | null> => {
+export const fetchUserDetails = async (
+  userId: string
+): Promise<APIResponse<{ user: User }>> => {
   const userRef = doc(firestore, "users", userId)
 
   try {
     const user = await getDoc(userRef)
-    return user.data() as User
+    return { success: true, data: { user: user.data() as User } }
   } catch (e) {
-    return null
+    return { success: false, error: "Not able to fetch user account details" }
   }
 }
 
@@ -32,7 +34,7 @@ export const updateUser = async (
   userId: string,
   name: string,
   contact: number,
-): Promise<{ success: boolean, error?: string}> => {
+): Promise<APIResponse<null>> => {
   const userRef = doc(firestore, "users", userId)
 
   try {

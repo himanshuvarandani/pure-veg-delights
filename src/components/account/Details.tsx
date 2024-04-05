@@ -12,8 +12,8 @@ const AccountDetails = () => {
 
   useEffect(() => {
     fetchUserDetails(user?.uid!)
-      .then(data => {
-        if (data) setUserDetails(data)
+      .then(response => {
+        if (response.success && response.data) setUserDetails(response.data?.user)
       })
       .catch(e => console.log("Not able to fetch Account details."))
   }, [])
