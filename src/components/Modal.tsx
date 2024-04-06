@@ -13,10 +13,14 @@ const Modal = ({ children }: { children: React.ReactNode }) => {
       onClick={onDismiss}
     >
       <div
-        className="w-full sm:w-4/5 md:w-3/4 lg:w-1/2 xl:w-1/3 border-2 border-yellow-500 rounded-xl bg-white mx-2 xs:mx-5 my-20"
+        className="w-full sm:w-4/5 md:w-3/4 lg:w-1/2 xl:w-1/3 mx-2 xs:mx-5 my-20"
         onClick={(e) => e.stopPropagation()}
       >
-        {children}
+        <div
+          className="max-h-[90vh] overflow-auto border-2 border-orange-550 bg-white rounded-xl shadow-2xl p-5"
+        >
+          {children}
+        </div>
       </div>
     </div>
   )
