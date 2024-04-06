@@ -4,6 +4,7 @@ import { signIn } from "@/firebase/auth"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
+import toast from "react-hot-toast"
 
 type Credentials = {
   email: string
@@ -15,7 +16,6 @@ const SignIn = () => {
     email: "",
     password: "",
   })
-  const [error, setError] = useState("")
   const router = useRouter()
 
   const handleCredentials = (e: any) => {
@@ -30,12 +30,12 @@ const SignIn = () => {
 
     signIn(credentials.email, credentials.password)
       .then((response) => {
-        if (response.success)
+        if (response.success) {
+          toast.success("Succcessfully Logged In")
           router.push("/")
-
-        setError(response.error!)
+        } else toast.error(response.error!)
       })
-      .catch((e) => setError("Not able to sign in, Try Again!"))
+      .catch((e) => toast.error("Sign In Failed, Try Again!"))
   }
 
   return (
@@ -66,11 +66,6 @@ const SignIn = () => {
           onChange={handleCredentials}
         />
       </div>
-      {error ? (
-        <p className="text-center text-red-500 tex-sm my-3">
-          {error}
-        </p>
-      ) : null}
       <div className="text-center text-sm">
         <button className="w-full rounded-2xl bg-orange-550 text-lg px-4 py-2 mb-2">
           Sign In

@@ -3,6 +3,7 @@
 import { fetchUserDetails, updateUser } from "@/firebase/user"
 import useAuth from "@/hooks/useAuth"
 import { useEffect, useState } from "react"
+import toast from "react-hot-toast"
 
 const AccountDetails = () => {
   const { user } = useAuth()
@@ -13,9 +14,10 @@ const AccountDetails = () => {
   useEffect(() => {
     fetchUserDetails(user?.uid!)
       .then(response => {
-        if (response.success && response.data) setUserDetails(response.data?.user)
+        if (response.success && response.data)
+          setUserDetails(response.data?.user)
       })
-      .catch(e => console.log("Not able to fetch Account details."))
+      .catch(e => toast.error("Not able to fetch Account details."))
   }, [])
 
   const handleInput = (e: any) => {
@@ -31,11 +33,10 @@ const AccountDetails = () => {
 
     updateUser(user?.uid!, userDetails.name, userDetails.contact)
       .then(response => {
-        if (response.success)
-          alert("Updated Details")
-        console.log("Not able to update details. Try Again!")
+        if (response.success) toast.success("Updated Details")
+        else toast.error(response.error!)
       })
-      .catch(() => console.log("Not able to update details. Try Again!"))
+      .catch(() => toast.error("Error Updating Account Details"))
   }
 
   return (

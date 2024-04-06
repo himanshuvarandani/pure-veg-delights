@@ -6,9 +6,10 @@ import useAuth from "@/hooks/useAuth"
 import { faPenToSquare, faPlus } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import Link from "next/link"
-import { useEffect, useState } from "react"
-import ChangeAddressModal from "./ChangeAddress"
 import { usePathname } from "next/navigation"
+import { useEffect, useState } from "react"
+import toast from "react-hot-toast"
+import ChangeAddressModal from "./ChangeAddress"
 
 type CartAddressProps = {
   address: Address | null
@@ -27,14 +28,14 @@ const CartAddress = ({ address, updateAddress }: CartAddressProps) => {
         if (response.success && response.data)
           updateAddress(response.data?.address)
       })
-      .catch(() => console.log("Error while fetching default address"))
+      .catch(() => toast.error("Error while fetching default address"))
     
     fetchAllAddresses(user?.uid!)
       .then(response => {
         if (response.success && response.data)
           setAllAddresses(response.data?.addresses)
       })
-      .catch(() => console.log("Error while fetching all addresses"))
+      .catch(() => toast.error("Error while fetching all addresses"))
   }, [user, pathname])
 
   return (

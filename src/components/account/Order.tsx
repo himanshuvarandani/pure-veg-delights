@@ -1,12 +1,13 @@
 "use client"
 
+import AddressCard from "@/components/address/Card"
 import { fetchOrderDetails } from "@/firebase/order"
 import { faMultiply } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import useAuth from "@/hooks/useAuth"
 import Link from "next/link"
 import { useEffect, useState } from "react"
-import AddressCard from "../address/Card"
+import toast from "react-hot-toast"
 
 type PropsType = { orderId: string }
 
@@ -23,7 +24,7 @@ const Order = ({ orderId }: PropsType) => {
           setProducts(response.data?.products)
         }
       })
-      .catch(() => console.log("Error while fetching order details"))
+      .catch(() => toast.error("Error while fetching order details"))
   }, [])
 
   return (

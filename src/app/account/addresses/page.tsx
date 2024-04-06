@@ -5,6 +5,7 @@ import { deleteAddress, fetchAllAddresses, updateDefaultAddress } from "@/fireba
 import useAuth from "@/hooks/useAuth"
 import Link from "next/link"
 import { useEffect, useState } from "react"
+import toast from "react-hot-toast"
 
 const Addresses = () => {
   const { user } = useAuth()
@@ -19,7 +20,7 @@ const Addresses = () => {
         if (response.success && response.data)
           setAddresses(response.data?.addresses)
       })
-      .catch(() => console.log("Error while fetching addresses"))
+      .catch(() => toast.error("Error Fetching Addresses"))
   }, [user, loading])
   
   const updateDefAddress = (addressId: string) => {
@@ -28,9 +29,10 @@ const Addresses = () => {
     setLoading(true)
     updateDefaultAddress(user?.uid!, addressId)
       .then(response => {
-        if (!response.success) alert(response.error)
+        if (response.success) toast.success("Default Address Changed")
+        else toast.error(response.error!)
       })
-      .catch(() => console.log("Error while updating default address"))
+      .catch(() => toast.error("Error Updating Default Address"))
       .finally(() => setLoading(false))
   }
   
@@ -40,9 +42,10 @@ const Addresses = () => {
     setLoading(true)
     deleteAddress(user?.uid!, addressId)
       .then(response => {
-        if (!response.success) alert(response.error)
+        if (response.success) toast.success("Address Deleted")
+        else toast.error(response.error!)
       })
-      .catch(() => console.log("Error while updating default address"))
+      .catch(() => toast.error("Error Deleting Address"))
       .finally(() => setLoading(false))
   }
 

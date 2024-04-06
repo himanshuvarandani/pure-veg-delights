@@ -50,6 +50,7 @@ type Order = {
 
 type OrderStatus =
   "Payment Pending" |
+  "Payment Failed" |
   "Payment Cancelled" |
   "Payment Done" |
   "Accepted" |

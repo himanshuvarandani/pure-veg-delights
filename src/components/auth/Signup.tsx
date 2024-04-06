@@ -4,6 +4,7 @@ import { signUp } from "@/firebase/auth"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
+import toast from "react-hot-toast"
 
 type UserDetails = {
   name: string
@@ -21,7 +22,6 @@ const SignUp = () => {
     password: "",
     confirmPassword: "",
   })
-  const [error, setError] = useState("")
   const router = useRouter()
 
   const handleInput = (e: any) => {
@@ -35,16 +35,16 @@ const SignUp = () => {
   const onSubmit = (e: any) => {
     e.preventDefault()
     if (details.password !== details.confirmPassword)
-      setError("Password do not match")
+      toast.error("Password do not match")
 
     signUp(details.name, details.contact, details.email, details.password)
       .then((response) => {
-        if (response.success)
+        if (response.success) {
+          toast.success("Succcessfully Registered")
           router.push("/")
-        
-        setError(response.error!)
+        } else toast.error(response.error!)
       })
-      .catch((e) => setError("Not able to sign in, Try Again!"))
+      .catch((e) => toast.error("Sign In Failed, Try Again!"))
   }
 
   return (
@@ -108,11 +108,6 @@ const SignUp = () => {
           onChange={handleInput}
         />
       </div>
-      {error ? (
-        <p className="text-center text-red-500 tex-sm my-3">
-          {error}
-        </p>
-      ) : null}
       <div className="text-center text-sm">
         <button className="w-full rounded-2xl bg-orange-550 text-lg px-4 py-2 mb-2">
           Sign Up

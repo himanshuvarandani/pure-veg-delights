@@ -4,6 +4,7 @@ import { createOrder, updatePaymentDetails } from "@/firebase/order"
 import useAuth from "@/hooks/useAuth"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
+import toast from "react-hot-toast"
 
 const PlaceOrder = ({ address }: { address: Address | null }) => {
   const { user, cart, setCart } = useAuth()
@@ -16,7 +17,7 @@ const PlaceOrder = ({ address }: { address: Address | null }) => {
     setIsLoading(true)
     if (!user) router.push("/signin")
 
-    if (!Object.keys(cart).length) alert("Please add some products to cart.")
+    if (!Object.keys(cart).length) toast("Please add some products to cart.")
 
     let total = 0
     let products: Array<{
@@ -49,7 +50,7 @@ const PlaceOrder = ({ address }: { address: Address | null }) => {
     })
     
     if (!response.success || !response.data || !response.data.orderId)
-      console.log("Something went wrong, Please Try Again!!")
+      toast.error("Order Failed, Try Again!")
     else {
       await makePayment(response.data.orderId, total)
     }
@@ -85,6 +86,7 @@ const PlaceOrder = ({ address }: { address: Address | null }) => {
         const res = await data.json()
         if (!res?.success) {
           await updatePaymentDetails(orderId, "Payment Cancelled")
+          toast.error("Payment Cancelled")
           setIsLoading(false)
         } else {
           await updatePaymentDetails(
@@ -94,6 +96,7 @@ const PlaceOrder = ({ address }: { address: Address | null }) => {
             response.razorpay_payment_id,
           )
 
+          toast.success("Order Completed, Thanks!")
           setCart({})
           router.push(`/account/order/${orderId}`)
         }
@@ -107,8 +110,8 @@ const PlaceOrder = ({ address }: { address: Address | null }) => {
     paymentObject.open()
 
     paymentObject.on("payment.failed", async (response: any) => {
-      alert("Payment failed. Please try again.")
-      await updatePaymentDetails(orderId, "Payment Cancelled")
+      await updatePaymentDetails(orderId, "Payment Failed")
+      toast.error("Payment Failed")
       setIsLoading(false)
     })
   }

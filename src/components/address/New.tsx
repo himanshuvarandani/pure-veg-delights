@@ -4,6 +4,7 @@ import { createAddress } from "@/firebase/address"
 import useAuth from "@/hooks/useAuth"
 import { useRouter } from "next/navigation"
 import React, { useState } from "react"
+import toast from "react-hot-toast"
 
 const initialAddress: Address = {
   userId: "",
@@ -22,7 +23,6 @@ const NewAddress = (
 ) => {
   const { user } = useAuth()
   const [address, setAddress] = useState<Address>(initialAddress)
-  const [error, setError] = useState("")
   const router = useRouter()
 
   const handleCredentials = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -46,13 +46,16 @@ const NewAddress = (
     })
       .then((response) => {
         if (response.success && response.data)
-          if (from === "Page")
+          if (from === "Page") {
+            toast.success("Address Created")
             router.push(`/account/address/${response.data.addressId}`)
-          else router.back()
-        
-        setError(response.error!)
+          } else {
+            toast.success("Address Created, Select Address again")
+            router.back()
+          }
+        else toast.error(response.error!)
       })
-      .catch((e) => setError("Not able to create address, Try Again!"))
+      .catch((e) => toast.error("Error Creating Address"))
   }
 
   return (
@@ -136,11 +139,6 @@ const NewAddress = (
         />
         <label htmlFor="default">Make this as default address</label>
       </div>
-      {error ? (
-        <p className="text-center text-red-500 tex-sm my-3">
-          {error}
-        </p>
-      ) : null}
       <div className="text-center text-sm">
         <button className="w-full rounded-2xl bg-orange-550 text-lg px-4 py-2 mb-2">
           Create

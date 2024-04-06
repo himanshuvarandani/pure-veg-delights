@@ -4,6 +4,7 @@ import ProductsList from "@/components/products/List"
 import { searchProducts } from "@/firebase/products"
 import { useSearchParams } from "next/navigation"
 import { useEffect, useState } from "react"
+import toast from "react-hot-toast"
 
 const SearchProductsList = () => {
   const searchParams = useSearchParams()
@@ -12,7 +13,7 @@ const SearchProductsList = () => {
   useEffect(() => {
     searchProducts(searchParams.get("q") || "")
       .then((data) => setProducts(data))
-      .catch(() => console.log("Error while fetching products"))
+      .catch(() => toast.error("Error Fetching Products"))
   }, [searchParams.get("q")])
 
   return (

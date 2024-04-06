@@ -6,6 +6,7 @@ import { faMultiply } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import Link from "next/link"
 import { useEffect, useState } from "react"
+import toast from "react-hot-toast"
 
 const Orders = () => {
   const [orders, setOrders] = useState<Array<OrderWithId>>([])
@@ -24,7 +25,7 @@ const Orders = () => {
           setTotalPages(response.data.totalPages)
         }
       })
-      .catch(() => console.log("Error while fetching order details"))
+      .catch(() => toast.error("Error while fetching order details"))
   }, [page])
 
   return (
