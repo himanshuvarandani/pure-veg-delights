@@ -2,14 +2,15 @@
 
 import Services from "@/components/Services"
 import useAuth from "@/hooks/useAuth"
-import { redirect } from "next/navigation"
+import { useRouter } from "next/navigation"
 
 export default function AccountLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   const { user } = useAuth()
+  const router = useRouter()
 
-  if (!user) redirect("/signin")
+  if (!user) router.push("/signin")
   
   return (
     <div>

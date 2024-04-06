@@ -1,7 +1,7 @@
 import SignIn from "@/components/auth/SignIn"
 import Modal from "@/components/Modal"
 
-const SignInPage = () => {
+const SignInModal = () => {
   return (
     <Modal>
       <SignIn />
@@ -9,4 +9,4 @@ const SignInPage = () => {
   )
 }
 
-export default SignInPage
+export default SignInModal

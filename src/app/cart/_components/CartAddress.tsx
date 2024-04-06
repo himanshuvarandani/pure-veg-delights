@@ -8,6 +8,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import Link from "next/link"
 import { useEffect, useState } from "react"
 import ChangeAddressModal from "./ChangeAddress"
+import { usePathname } from "next/navigation"
 
 type CartAddressProps = {
   address: Address | null
@@ -16,6 +17,7 @@ type CartAddressProps = {
 
 const CartAddress = ({ address, updateAddress }: CartAddressProps) => {
   const { user } = useAuth()
+  const pathname = usePathname()
   const [allAddresses, setAllAddresses] = useState<Address[]>([])
   const [showModal, setShowModal] = useState(false)
 
@@ -33,7 +35,7 @@ const CartAddress = ({ address, updateAddress }: CartAddressProps) => {
           setAllAddresses(response.data?.addresses)
       })
       .catch(() => console.log("Error while fetching all addresses"))
-  }, [user])
+  }, [user, pathname])
 
   return (
     <div className="flex flex-col items-center">
