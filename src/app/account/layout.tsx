@@ -1,16 +1,15 @@
 "use client"
 
-import Services from "@/components/Services";
-import useAuth from "@/hooks/useAuth";
+import Services from "@/components/Services"
+import useAuth from "@/hooks/useAuth"
+import { redirect } from "next/navigation"
 
 export default function AccountLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: Readonly<{ children: React.ReactNode }>) {
   const { user } = useAuth()
 
-  if (!user) return null
+  if (!user) redirect("/signin")
   
   return (
     <div>
