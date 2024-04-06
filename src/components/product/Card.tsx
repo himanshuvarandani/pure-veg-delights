@@ -9,7 +9,7 @@ type PropsType = {
 const ProductCard = ({ theme, product }: PropsType) => {
   return (
     <div 
-      className={`border-2 rounded-xl overflow-hidden flex sm:flex-col sm:justify-between w-full sm:w-60 m-2
+      className={`w-full sm:w-60 border-2 rounded-xl overflow-hidden flex sm:flex-col sm:justify-between shadow-xl m-2
         ${theme === "white" ? "border-yellow-500" : "border-white"}
       `}
     >

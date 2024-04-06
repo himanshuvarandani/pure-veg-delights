@@ -2,12 +2,15 @@ import Categories from "@/components/Categories"
 import ProductsList from "@/components/products/List"
 import TodaySpecial from "@/components/products/TodaySpecial"
 import Services from "@/components/Services"
+import { todaySpecialProducts } from "@/firebase/products"
 import { faClock, faLocationDot, faTruck } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import Image from "next/image"
 import Link from "next/link"
 
 export default async function Home() {
+  const bestSellingProducts = await todaySpecialProducts()
+
   return (
     <div>
       <div className="w-full flex flex-col items-center">
@@ -77,7 +80,7 @@ export default async function Home() {
         <ProductsList
           classNames="justify-around"
           theme="white"
-          products={[]}
+          products={bestSellingProducts}
         />
       </div>
 
