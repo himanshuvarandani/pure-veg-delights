@@ -1,24 +1,23 @@
 "use client"
 
+import AuthLoading from "@/components/auth/Loading"
 import useAuth from "@/hooks/useAuth"
 import { useRouter } from "next/navigation"
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
 import toast from "react-hot-toast"
 
 export default function AuthLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  const { user } = useAuth()
+  const { isLoading, user } = useAuth()
   const router = useRouter()
-  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
-    if (!user) setLoading(true)
-    else {
+    if (isLoading && user) {
       toast("Already Logged In")
       router.push("/")
     }
-  }, [user])
+  }, [isLoading, user])
 
-  return !loading ? null : children
+  return !isLoading ? (<AuthLoading />) : children
 }

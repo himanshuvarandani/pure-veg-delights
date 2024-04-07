@@ -2,18 +2,19 @@
 
 import { faSearch } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { usePathname, useRouter, useSearchParams } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { useDebouncedCallback } from "use-debounce"
 
-const SearchBar = () => {
-  const [query, setQuery] = useState("")
-  const searchParams = useSearchParams()
+const SearchBar = (
+  { searchQuery }: { searchQuery: string | undefined }
+) => {
+  const [query, setQuery] = useState(searchQuery)
   const pathname = usePathname()
   const { replace } = useRouter()
 
   const handleSearch = useDebouncedCallback((term: string) => {
-    if (term) {
+    if (term.trim()) {
       replace(`${pathname}?q=${term}`)
     } else {
       replace(`${pathname}`)
@@ -21,8 +22,8 @@ const SearchBar = () => {
   }, 500)
 
   useEffect(() => {
-    setQuery(searchParams.get("q") || "")
-  }, [searchParams.get("q")])
+    setQuery(searchQuery)
+  }, [searchQuery])
 
   return (
     <div className="flex border-2 border-orange-550 rounded-3xl overflow-hidden pl-2 mx-2">

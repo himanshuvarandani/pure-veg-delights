@@ -8,7 +8,7 @@ const SearchProductsList = async (
 
   return (
     <div>
-      {!Object.keys(products).length
+      {!products || !Object.keys(products).length
         ? (
           <p className="py-10 text-center text-orange-550">
             <span className="text-lg font-bold">Sorry!!</span>

@@ -1,16 +1,16 @@
-import Categories from "@/components/Categories"
-import ProductsList from "@/components/products/List"
+import Categories from "@/components/categories/Index"
+import CategoriesLoading from "@/components/categories/Loading"
+import BestSelling from "@/components/products/BestSelling"
+import ProductsLoading from "@/components/products/Loading"
 import TodaySpecial from "@/components/products/TodaySpecial"
 import Services from "@/components/Services"
-import { todaySpecialProducts } from "@/firebase/products"
 import { faClock, faLocationDot, faTruck } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import Image from "next/image"
 import Link from "next/link"
+import { Suspense } from "react"
 
 export default async function Home() {
-  const bestSellingProducts = await todaySpecialProducts()
-
   return (
     <div>
       <div className="w-full flex flex-col items-center">
@@ -72,19 +72,25 @@ export default async function Home() {
         </div>
       </div>
 
-      <TodaySpecial theme="white" />
+      <Suspense
+        fallback={<ProductsLoading theme="white" heading="Today's Special" />}
+      >
+        <TodaySpecial theme="white" />
+      </Suspense>
+
       <Services />
-
-      <div className="py-10 px-2 xs:px-5 sm:px-10 lg:px-20">
-        <h3 className="text-2xl text-orange-550 text-center font-bold mb-2">BestSelling Products</h3>
-        <ProductsList
-          classNames="justify-around"
-          theme="white"
-          products={bestSellingProducts}
-        />
-      </div>
-
-      <Categories />
+      
+      <Suspense
+        fallback={
+          <ProductsLoading theme="white" heading="Best Selling Products" />
+        }
+      >
+        <BestSelling theme="white" />
+      </Suspense>
+      
+      <Suspense fallback={<CategoriesLoading />}>
+        <Categories />
+      </Suspense>
     </div>
   )
 }
