@@ -2,33 +2,45 @@
 
 import { fetchUserOrders } from "@/firebase/order"
 import useAuth from "@/hooks/useAuth"
-import { faMultiply } from "@fortawesome/free-solid-svg-icons"
+import {
+  faAngleLeft,
+  faAngleRight,
+  faMultiply
+} from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import Link from "next/link"
 import { useEffect, useState } from "react"
 import toast from "react-hot-toast"
+import OrdersLoading from "./loading/Orders"
 
 const Orders = () => {
+  const { isLoading, user } = useAuth()
   const [orders, setOrders] = useState<Array<OrderWithId>>([])
   const [products, setProducts] = useState<ProductsObject>({})
   const [totalPages, setTotalPages] = useState<number>(1)
   const [page, setPage] = useState<number>(1)
+  const [pageLoading, setPageLoading] = useState(true)
   const pageSize = 10
-  const { user } = useAuth()
 
   useEffect(() => {
-    fetchUserOrders(user?.uid!, page, pageSize)
-      .then(response => {
-        if (response.success && response.data) {
-          setOrders(response.data.orders)
-          setProducts(response.data.products)
-          setTotalPages(response.data.totalPages)
-        }
-      })
-      .catch(() => toast.error("Error while fetching order details"))
-  }, [page])
+    setPageLoading(true)
+    if (isLoading || !user) return
 
-  return (
+    fetchUserOrders(user.uid, page, pageSize)
+      .then(response => {
+        if (response.success) {
+          if (response.data) {
+            setOrders(response.data.orders)
+            setProducts(response.data.products)
+            setTotalPages(response.data.totalPages)
+          }
+          setPageLoading(false)
+        } else toast.error(response.error!)
+      })
+      .catch(() => toast.error("Error Fetching Orders"))
+  }, [isLoading, user, page])
+
+  return pageLoading ? (<OrdersLoading />) : (
     <div className="py-10">
       {!orders.length ? (
         <div className="flex flex-col items-center p-10">
@@ -95,20 +107,28 @@ const Orders = () => {
             </Link>
           ))}
           {totalPages <= 1 ? null : (
-            <div className="w-full md:w-4/5 lg:w-3/5 xl:w-2/5 flex justify-around text-orange-550 my-5">
+            <div
+              className="w-full md:w-4/5 lg:w-3/5 xl:w-2/5 flex justify-around text-orange-550 my-5"
+            >
               <button
-                className={page <= 1 ? "opacity-20" : ""}
+                className={`flex items-center space-x-1
+                  ${page <= 1 ? "opacity-20" : ""}
+                `}
                 onClick={() => setPage(prev => prev > 1 ? prev-1 : prev)}
                 disabled={page <= 1}
               >
-                Previous
+                <FontAwesomeIcon icon={faAngleLeft} size="sm" />
+                <p>Previous</p>
               </button>
               <button
-                className={page >= totalPages ? "opacity-20" : ""}
+                className={`flex items-center space-x-1
+                  ${page >= totalPages ? "opacity-20" : ""}
+                `}
                 onClick={() => setPage(prev => prev < totalPages ? prev+1 : prev)}
                 disabled={page >= totalPages}
               >
-                Next
+                <p>Next</p>
+                <FontAwesomeIcon icon={faAngleRight} size="sm" />
               </button>
             </div>
           )}

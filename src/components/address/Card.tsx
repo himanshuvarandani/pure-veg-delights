@@ -60,7 +60,9 @@ const AddressCard = ({
 
       {!editable || address.default || !updateDefAddress ? null : (
         <button
-          className="text-xs text-yellow-500 mt-3"
+          className={`text-xs text-yellow-500 mt-3
+            ${defAddButtonDisable ? "text-gray-300" : ""}
+          `}
           disabled={defAddButtonDisable}
           onClick={() => updateDefAddress(address.id!)}
         >

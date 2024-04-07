@@ -25,33 +25,33 @@ type ContextType = {
 const initialCart = {}
 
 export const AuthContext = createContext<ContextType>({
-  isLoading: false,
+  isLoading: true,
   user: null,
   cart: {},
   setCart: () => {},
 })
 
 export const AuthContextProvider = ({ children }: PropsType) => {
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
   const [user, setUser] = useState<User | null>(null)
   const [cart, setCart] = useState<Cart>(initialCart)
 
   useEffect(() => {
-    setIsLoading(false)
+    setIsLoading(true)
     const unsubscribe = onAuthStateChanged((authUser) => {
       setUser(authUser)
-      setIsLoading(true)
+      setIsLoading(false)
     })
 
     return () => unsubscribe()
   }, [])
 
   useEffect(() => {
-    setIsLoading(false)
+    setIsLoading(true)
     const storedCart = localStorage.getItem("cart")
     if (storedCart) {
       setCart(JSON.parse(storedCart))
-      setIsLoading(true)
+      setIsLoading(false)
     }
   }, [])
 

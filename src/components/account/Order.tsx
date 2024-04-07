@@ -8,26 +8,34 @@ import useAuth from "@/hooks/useAuth"
 import Link from "next/link"
 import { useEffect, useState } from "react"
 import toast from "react-hot-toast"
+import OrderLoading from "./loading/Order"
 
 type PropsType = { orderId: string }
 
 const Order = ({ orderId }: PropsType) => {
+  const { isLoading, user } = useAuth()
   const [order, setOrder] = useState<Order | null>(null)
   const [products, setProducts] = useState<ProductsObject>({})
-  const { user } = useAuth()
+  const [pageLoading, setPageLoading] = useState(true)
 
   useEffect(() => {
-    fetchOrderDetails(orderId, user?.uid!)
-      .then(response => {
-        if (response.success && response.data) {
-          setOrder(response.data?.order)
-          setProducts(response.data?.products)
-        }
-      })
-      .catch(() => toast.error("Error while fetching order details"))
-  }, [])
+    setPageLoading(true)
+    if (isLoading || !user) return
 
-  return (
+    fetchOrderDetails(orderId, user.uid)
+      .then(response => {
+        if (response.success) {
+          if (response.data) {
+            setOrder(response.data?.order)
+            setProducts(response.data?.products)
+          }
+          setPageLoading(false)
+        } else toast.error(response.error!)
+      })
+      .catch(() => toast.error("Error Fetching Order Details"))
+  }, [isLoading, user])
+
+  return pageLoading ? (<OrderLoading />) : (
     <div>
       {!order ? (
         <div className="flex flex-col items-center p-10">
@@ -76,12 +84,14 @@ const Order = ({ orderId }: PropsType) => {
               <h3 className="text-xl font-bold mb-2 text-orange-550">
                 Address
               </h3>
-              <div className="w-full sm:w-3/4">
-                <AddressCard
-                  address={order.address}
-                  deletable={false}
-                  editable={false}
-                />
+              <div className="flex justify-center">
+                <div className="w-full sm:w-3/4">
+                  <AddressCard
+                    address={order.address}
+                    deletable={false}
+                    editable={false}
+                  />
+                </div>
               </div>
             </div>
             <div className="py-5">
