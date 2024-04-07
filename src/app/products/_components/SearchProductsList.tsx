@@ -1,20 +1,10 @@
-"use client"
-
 import ProductsList from "@/components/products/List"
 import { searchProducts } from "@/firebase/products"
-import { useSearchParams } from "next/navigation"
-import { useEffect, useState } from "react"
-import toast from "react-hot-toast"
 
-const SearchProductsList = () => {
-  const searchParams = useSearchParams()
-  const [products, setProducts] = useState<CategoryProducts>({})
-  
-  useEffect(() => {
-    searchProducts(searchParams.get("q") || "")
-      .then((data) => setProducts(data))
-      .catch(() => toast.error("Error Fetching Products"))
-  }, [searchParams.get("q")])
+const SearchProductsList = async (
+  { query }: { query: string | undefined }
+) => {
+  const products = await searchProducts(query || "")
 
   return (
     <div>
