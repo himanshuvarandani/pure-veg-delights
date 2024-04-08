@@ -1,3 +1,4 @@
+import firebase from "firebase/compat/app"
 import {
   addDoc,
   collection,
@@ -8,9 +9,10 @@ import {
   limit,
   orderBy,
   query,
+  setDoc,
   startAfter,
   updateDoc,
-  where
+  where,
 } from "firebase/firestore"
 import { firestore } from "./firebase"
 
@@ -49,6 +51,37 @@ export const updatePaymentDetails = async (
   }
 }
 
+export const updateOrderStatus = async (
+  orderId: string,
+  status: OrderStatus,
+): Promise<APIResponse<null>> => {
+  const orderRef = doc(firestore, "orders", orderId)
+
+  try {
+    await updateDoc(orderRef, { status })
+    if (status === "Completed") {
+      try {
+        const order = await getDoc(orderRef)
+        const { products } = order.data() as Order
+        const promises: Promise<void>[] = products.map(async item => {
+          const soldProductRef = doc(firestore, "sold-products", item.product)
+          await setDoc(
+            soldProductRef,
+            { quantity: firebase.firestore.FieldValue.increment(item.quantity)}
+          )
+        })
+
+        await Promise.all(promises)
+      } catch (e) {
+        console.log(e)
+      }
+    }
+    return { success: true }
+  } catch (e) {
+    return { success: false, error: "Not able to create user, Try again!" }
+  }
+}
+
 export const fetchOrderDetails = async (
   orderId: string,
   userId: string,
@@ -70,7 +103,12 @@ export const fetchOrderDetails = async (
           order.products.map(async (item: Order["products"][0]) => {
             const productRef = doc(firestore, "products", item.product)
             const product = await getDoc(productRef)
-            return { [item.product]: product.data() as Product }
+            return {
+              [item.product]: {
+                ...product.data(),
+                id: item.product,
+              } as Product
+            }
           })
 
         const productObjectsArray: Array<ProductsObject> = await Promise.all(promises)
@@ -151,7 +189,12 @@ export const fetchUserOrders = async (
           order.products.map(async (item: Order["products"][0]) => {
             const productRef = doc(firestore, "products", item.product)
             const product = await getDoc(productRef)
-            return { [item.product]: product.data() as Product }
+            return {
+              [item.product]: {
+                ...product.data(),
+                id: item.product,
+              } as Product
+            }
           })
         )
       })

@@ -54,7 +54,7 @@ type OrderStatus =
   "Payment Cancelled" |
   "Payment Done" |
   "Accepted" |
-  "Preparing" |
+  "Ready For Pickup" |
   "Delivering" |
   "Completed" |
   "Cancelled"

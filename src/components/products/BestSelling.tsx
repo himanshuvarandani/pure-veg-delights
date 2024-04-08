@@ -1,4 +1,4 @@
-import { todaySpecialProducts } from "@/firebase/products"
+import { bestSellingProducts } from "@/firebase/products"
 import ProductsList from "./List"
 
 type PropsType = {
@@ -6,8 +6,7 @@ type PropsType = {
 }
 
 const BestSelling = async ({ theme }: PropsType) => {
-  // change api to bestselling products
-  const products: Array<Product> = await todaySpecialProducts()
+  const products: Array<Product> = await bestSellingProducts()
 
   return (
     <div className={`py-10 px-5 sm:px-10 lg:px-20
