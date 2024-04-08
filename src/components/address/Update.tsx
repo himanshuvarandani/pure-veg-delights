@@ -21,12 +21,14 @@ const initialAddress: Address = {
 const UpdateAddress = (
   { addressId, from }: { addressId: string, from: "Page" | "Modal" }
 ) => {
-  const { user } = useAuth()
+  const { isLoading, user } = useAuth()
   const [address, setAddress] = useState<Address>(initialAddress)
   const router = useRouter()
 
   useEffect(() => {
-    fetchAddressById(user?.uid!, addressId)
+    if (isLoading || !user) return
+
+    fetchAddressById(user.uid, addressId)
       .then(response => {
         if (response.success && response.data && response.data.address !== null) {
           setAddress(response.data.address)
@@ -36,7 +38,7 @@ const UpdateAddress = (
         }
       })
       .catch((e) => toast.error("Error Fetching Address"))
-  }, [user, addressId])
+  }, [isLoading, user, addressId])
 
   const handleCredentials = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, type, value, checked } = e.target

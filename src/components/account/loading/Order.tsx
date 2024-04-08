@@ -54,16 +54,16 @@ const OrderLoading = () => {
           </h3>
           <div className="px-2 xs:px-5">
             <div className="flex justify-between space-x-2">
-              <div className="w-40 h-6 bg-gray-300" />
+              <h5 className="font-bold">Item Total</h5>
               <div className="w-20 h-6 bg-gray-300" />
             </div>
             <div className="flex justify-between space-x-2 mt-2">
-              <div className="w-40 h-6 bg-gray-300" />
+              <h5 className="font-bold">G.S.T.</h5>
               <div className="w-20 h-6 bg-gray-300" />
             </div>
             <hr className="mt-5" />
             <div className="flex justify-between space-x-2 mt-2">
-              <div className="w-40 h-6 bg-gray-300" />
+              <h5 className="font-bold">To Pay</h5>
               <div className="w-20 h-6 bg-gray-300" />
             </div>
           </div>

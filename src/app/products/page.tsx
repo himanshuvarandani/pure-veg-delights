@@ -23,7 +23,7 @@ const Products = (
 
       <Suspense
         key="today-special"
-        fallback={<ProductsLoading theme="white" heading="Today's Special" />}
+        fallback={<ProductsLoading theme="orange" heading="Today's Special" />}
       >
         <TodaySpecial theme="orange" />
       </Suspense>

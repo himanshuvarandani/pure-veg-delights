@@ -4,24 +4,29 @@ import ProductCard from "@/components/product/Card"
 import useAuth from "@/hooks/useAuth"
 import Link from "next/link"
 import { useEffect, useState } from "react"
-import PlaceOrder from "./PlaceOrder"
 import CartAddress from "./CartAddress"
+import CartLoading from "./Loading"
+import PlaceOrder from "./PlaceOrder"
 
 const CartDetails = () => {
-  const { cart } = useAuth()
+  const { isLoading, cart } = useAuth()
   const [total, setTotal] = useState<number>(0)
   const [address, setAddress] = useState<Address | null>(null)
+  const [pageLoading, setPageLoading] = useState(true)
 
   useEffect(() => {
+    if (isLoading || !cart) return
+
     let itemTotal = 0
     Object.keys(cart).map(productId => {
       itemTotal += cart[productId].product.price * cart[productId].quantity
     })
 
     setTotal(itemTotal)
-  }, [cart])
+    setPageLoading(false)
+  }, [isLoading, cart])
 
-  return (
+  return pageLoading ? (<CartLoading />) : (
     <div>
       {!cart || !Object.keys(cart).length ? (
         <div className="flex flex-col items-center p-10">

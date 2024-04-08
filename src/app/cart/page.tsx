@@ -1,5 +1,7 @@
 import TodaySpecial from "@/components/products/TodaySpecial"
 import CartDetails from "./_components/CartDetails"
+import { Suspense } from "react"
+import ProductsLoading from "@/components/products/Loading"
 
 const Cart = () => {
   return (
@@ -9,7 +11,11 @@ const Cart = () => {
         <CartDetails />
       </div>
       
-      <TodaySpecial theme="orange" />
+      <Suspense
+        fallback={<ProductsLoading theme="orange" heading="Today's Special" />}
+      >
+        <TodaySpecial theme="orange" />
+      </Suspense>
     </div>
   )
 }

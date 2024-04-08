@@ -1,7 +1,8 @@
 "use client"
 
 import AddressCard from "@/components/address/Card"
-import { fetchAllAddresses, fetchDefaultAddress } from "@/firebase/address"
+import AddressLoadingCard from "@/components/address/Loading"
+import { fetchAddressById, fetchAllAddresses, fetchDefaultAddress } from "@/firebase/address"
 import useAuth from "@/hooks/useAuth"
 import { faPenToSquare, faPlus } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
@@ -17,32 +18,68 @@ type CartAddressProps = {
 }
 
 const CartAddress = ({ address, updateAddress }: CartAddressProps) => {
-  const { user } = useAuth()
+  const { isLoading, user } = useAuth()
   const pathname = usePathname()
   const [allAddresses, setAllAddresses] = useState<Address[]>([])
   const [showModal, setShowModal] = useState(false)
+  const [addLoading, setAddLoading] = useState(true)
 
   useEffect(() => {
-    fetchDefaultAddress(user?.uid!)
+    if (isLoading || !user) return
+
+    fetchDefaultAddress(user.uid)
       .then(response => {
-        if (response.success && response.data)
-          updateAddress(response.data?.address)
+        if (response.success) {
+          if (response.data) updateAddress(response.data?.address)
+        } else toast.error(response.error!)
       })
-      .catch(() => toast.error("Error while fetching default address"))
+      .catch(() => toast.error("Error Fetching Default Address"))
+      .finally(() => setAddLoading(false))
+  }, [isLoading, user])
+  
+  useEffect(() => {
+    if (isLoading || !user) return
+    if (pathname != "/cart") return
+    if (addLoading) return
+
+    setAddLoading(true)
+    if (!address) {
+      fetchDefaultAddress(user.uid)
+        .then(response => {
+          if (response.success) {
+            if (response.data) updateAddress(response.data?.address)
+          } else toast.error(response.error!)
+        })
+        .catch(() => toast.error("Error Fetching Default Address"))
+        .finally(() => setAddLoading(false))
+    } else {
+      fetchAddressById(user.uid, address.id!)
+        .then(response => {
+          if (response.success) {
+            if (response.data) updateAddress(response.data?.address)
+          } else toast.error(response.error!)
+        })
+        .catch(() => toast.error("Error Fetching Updated Address"))
+        .finally(() => setAddLoading(false))
+    }
+  }, [pathname])
+
+  useEffect(() => {
+    if (isLoading || !user) return
+    if (pathname != "/cart") return
     
-    fetchAllAddresses(user?.uid!)
+    fetchAllAddresses(user.uid)
       .then(response => {
-        if (response.success && response.data)
-          setAllAddresses(response.data?.addresses)
+        if (response.success) {
+          if (response.data) setAllAddresses(response.data?.addresses)
+        } else toast.error(response.error!)
       })
-      .catch(() => toast.error("Error while fetching all addresses"))
-  }, [user, pathname])
+      .catch(() => toast.error("Error Fetching All Addresses"))
+  }, [isLoading, user, pathname])
 
   return (
     <div className="flex flex-col items-center">
-      <div
-        className="w-full md:w-4/5 lg:w-3/5 xl:w-2/5 pt-10"
-      >
+      <div className="w-full md:w-4/5 lg:w-3/5 xl:w-2/5 pt-10">
         <div className="relative">
           <h3 className="text-xl text-center font-bold text-orange-550 mb-5">
             Address
@@ -76,11 +113,13 @@ const CartAddress = ({ address, updateAddress }: CartAddressProps) => {
             </Link>
           ) : (
             <div className="w-full sm:w-3/4">
-              <AddressCard
-                address={address}
-                deletable={false}
-                editable={true}
-              />
+              {addLoading ? (<AddressLoadingCard />) : (
+                <AddressCard
+                  address={address}
+                  deletable={false}
+                  editable={true}
+                />
+              )}
             </div>
           )}
         </div>

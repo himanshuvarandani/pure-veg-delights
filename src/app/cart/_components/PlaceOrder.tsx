@@ -8,13 +8,13 @@ import toast from "react-hot-toast"
 
 const PlaceOrder = ({ address }: { address: Address | null }) => {
   const { user, cart, setCart } = useAuth()
-  const [isLoading, setIsLoading] = useState(false)
+  const [orderLoading, setOrderLoading] = useState(false)
   const router = useRouter()
 
   const placeOrder = async () => {
-    if (isLoading || !address) return
+    if (orderLoading || !address) return
 
-    setIsLoading(true)
+    setOrderLoading(true)
     if (!user) router.push("/signin")
 
     if (!Object.keys(cart).length) toast("Please add some products to cart.")
@@ -70,7 +70,7 @@ const PlaceOrder = ({ address }: { address: Address | null }) => {
       modal: {
         ondismiss: async () => {
           await updatePaymentDetails(orderId, "Payment Cancelled")
-          setIsLoading(false)
+          setOrderLoading(false)
         },
       },
       handler: async (response: any) => {
@@ -87,7 +87,7 @@ const PlaceOrder = ({ address }: { address: Address | null }) => {
         if (!res?.success) {
           await updatePaymentDetails(orderId, "Payment Cancelled")
           toast.error("Payment Cancelled")
-          setIsLoading(false)
+          setOrderLoading(false)
         } else {
           await updatePaymentDetails(
             orderId,
@@ -112,17 +112,17 @@ const PlaceOrder = ({ address }: { address: Address | null }) => {
     paymentObject.on("payment.failed", async (response: any) => {
       await updatePaymentDetails(orderId, "Payment Failed")
       toast.error("Payment Failed")
-      setIsLoading(false)
+      setOrderLoading(false)
     })
   }
 
   return (
     <button
       className={`rounded-2xl bg-orange-550 text-white px-4 py-2 my-5
-        ${isLoading || !address ? "opacity-20" : null }
+        ${orderLoading || !address ? "opacity-20" : null }
       `}
       onClick={placeOrder}
-      disabled={isLoading}
+      disabled={orderLoading}
     >
       Place Order
     </button>

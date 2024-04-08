@@ -6,13 +6,15 @@ import { useEffect, useState } from "react"
 import toast from "react-hot-toast"
 
 const AccountDetails = () => {
-  const { user } = useAuth()
+  const { isLoading, user } = useAuth()
   const [userDetails, setUserDetails] = useState<User>({
     name: "", contact: 0, email: ""
   })
 
   useEffect(() => {
-    fetchUserDetails(user?.uid!)
+    if (isLoading || !user) return
+
+    fetchUserDetails(user.uid)
       .then(response => {
         if (response.success && response.data)
           setUserDetails(response.data?.user)
