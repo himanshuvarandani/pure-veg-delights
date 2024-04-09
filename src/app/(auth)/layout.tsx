@@ -14,10 +14,10 @@ export default function AuthLayout({
 
   useEffect(() => {
     if (!isLoading && user) {
-      toast("Already Logged In")
+      toast.success("Already Logged In")
       router.push("/")
     }
   }, [isLoading, user])
 
-  return isLoading ? (<AuthLoading />) : children
+  return (isLoading || user) ? (<AuthLoading />) : children
 }

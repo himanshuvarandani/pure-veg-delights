@@ -1,6 +1,5 @@
 "use client"
 
-import Services from "@/components/Services"
 import useAuth from "@/hooks/useAuth"
 import { useRouter } from "next/navigation"
 import { useEffect } from "react"
@@ -15,14 +14,9 @@ export default function AccountLayout({
   useEffect(() => {
     if (!isLoading && !user) {
       toast.error("Login Required")
-      router.push("/signin")
+      router.replace("/signin")
     }
   }, [isLoading, user])
   
-  return (isLoading || !user) ? null : (
-    <div>
-      {children}
-      <Services />
-    </div>
-  )
+  return (isLoading || !user) ? null : children
 }
