@@ -1,8 +1,9 @@
+import { faUser } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Image from 'next/image'
 import Link from 'next/link'
+import CartLink from './CartLink'
 import SessionLink from './SessionLink'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCartShopping, faUser } from '@fortawesome/free-solid-svg-icons'
 
 export default function Header() {
   return (
@@ -29,12 +30,7 @@ export default function Header() {
           </Link>
         </div>
         <div className="flex items-center space-x-2">
-          <Link
-            href="/cart"
-            className="mx-3 my-2 text-sm font-semibold"
-          >
-            <FontAwesomeIcon icon={faCartShopping} height={30} />
-          </Link>
+          <CartLink />
           <SessionLink
             href="/account"
             classNames="px-3 py-2 text-sm font-semibold"
