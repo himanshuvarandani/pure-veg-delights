@@ -1,5 +1,4 @@
 import Footer from "@/components/Footer"
-import Header from "@/components/Header"
 import { AuthContextProvider } from "@/context/AuthContext"
 import type { Metadata } from "next"
 import Script from "next/script"
@@ -23,11 +22,8 @@ export default function RootLayout({
       <html lang="en">
         <body>
           <AuthContextProvider>
-            <Header />
-            <main className="min-h-[35vh] sm:min-h-[65vh]">
-              {children}
-              {modal}
-            </main>
+            {children}
+            {modal}
             <Toaster toastOptions={{ duration: 4000 }} />
             <Footer />
           </AuthContextProvider>

@@ -1,7 +1,7 @@
-import TodaySpecial from "@/components/products/TodaySpecial"
-import CartDetails from "./_components/CartDetails"
-import { Suspense } from "react"
 import ProductsLoading from "@/components/products/Loading"
+import TodaySpecial from "@/components/products/TodaySpecial"
+import { Suspense } from "react"
+import CartDetails from "./_components/CartDetails"
 
 const Cart = () => {
   return (

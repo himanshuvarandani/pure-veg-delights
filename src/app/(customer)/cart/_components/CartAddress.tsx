@@ -2,7 +2,11 @@
 
 import AddressCard from "@/components/address/Card"
 import AddressLoadingCard from "@/components/address/Loading"
-import { fetchAddressById, fetchAllAddresses, fetchDefaultAddress } from "@/firebase/address"
+import {
+  fetchAddressById,
+  fetchAllAddresses,
+  fetchDefaultAddress
+} from "@/firebase/address"
 import useAuth from "@/hooks/useAuth"
 import { faPenToSquare, faPlus } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"

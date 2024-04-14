@@ -1,6 +1,7 @@
 "use client"
 
 import AuthLoading from "@/components/auth/Loading"
+import Header from "@/components/Header"
 import useAuth from "@/hooks/useAuth"
 import { useRouter } from "next/navigation"
 import { useEffect } from "react"
@@ -19,5 +20,12 @@ export default function AuthLayout({
     }
   }, [isLoading, user])
 
-  return (isLoading || user) ? (<AuthLoading />) : children
+  return (
+    <>
+      <Header />
+      <main className="min-h-[35vh] sm:min-h-[65vh]">
+        {(isLoading || user) ? (<AuthLoading />) : children}
+      </main>
+    </>
+  )
 }
