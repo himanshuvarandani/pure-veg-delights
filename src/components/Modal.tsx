@@ -17,7 +17,7 @@ const Modal = ({ children }: { children: React.ReactNode }) => {
         onClick={(e) => e.stopPropagation()}
       >
         <div
-          className="max-h-[90vh] overflow-auto border-2 border-orange-550 bg-white rounded-xl shadow-2xl p-5"
+          className="max-h-[90vh] overflow-auto border-2 border-orange-550 bg-white rounded-xl shadow-2xl p-5 no-scrollbar"
         >
           {children}
         </div>

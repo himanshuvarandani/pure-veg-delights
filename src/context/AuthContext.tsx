@@ -47,11 +47,9 @@ export const AuthContextProvider = ({ children }: PropsType) => {
   }, [])
 
   useEffect(() => {
-    setIsLoading(true)
     const storedCart = localStorage.getItem("cart")
     if (storedCart) {
       setCart(JSON.parse(storedCart))
-      setIsLoading(false)
     }
   }, [])
 
