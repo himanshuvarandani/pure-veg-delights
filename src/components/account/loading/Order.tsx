@@ -29,7 +29,7 @@ const OrderLoading = () => {
                 <FontAwesomeIcon
                   className="pt-1"
                   icon={faMultiply}
-                  size="xs"
+                  height={15}
                 />
                 <div className="w-8 h-6 bg-gray-300" />
               </div>
