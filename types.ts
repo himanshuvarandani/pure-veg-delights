@@ -4,12 +4,6 @@ type APIResponse<T> = {
   error?: string
 }
 
-type User = {
-  name: string
-  email: string
-  contact: number
-}
-
 type Product = {
   id: string
   name: string

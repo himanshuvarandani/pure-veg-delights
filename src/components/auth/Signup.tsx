@@ -8,7 +8,6 @@ import toast from "react-hot-toast"
 
 type UserDetails = {
   name: string
-  contact: number
   email: string
   password: string
   confirmPassword: string
@@ -17,7 +16,6 @@ type UserDetails = {
 const SignUp = () => {
   const [details, setDetails] = useState<UserDetails>({
     name: "",
-    contact: 0,
     email: "",
     password: "",
     confirmPassword: "",
@@ -37,7 +35,7 @@ const SignUp = () => {
     if (details.password !== details.confirmPassword)
       toast.error("Password do not match")
 
-    signUp(details.name, details.contact, details.email, details.password)
+    signUp(details.name, details.email, details.password)
       .then((response) => {
         if (response.success) {
           toast.success("Succcessfully Registered")
@@ -59,17 +57,6 @@ const SignUp = () => {
           name="name"
           type="string"
           placeholder="Enter your Name"
-          required
-          className="border-2 rounded-xl py-2 px-4"
-          onChange={handleInput}
-        />
-      </div>
-      <div className="flex flex-col space-y-1">
-        <label htmlFor="contact">Contact</label>
-        <input
-          name="contact"
-          type="number"
-          placeholder="Enter your Mobile Number"
           required
           className="border-2 rounded-xl py-2 px-4"
           onChange={handleInput}

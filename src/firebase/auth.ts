@@ -3,20 +3,24 @@ import {
   User,
   createUserWithEmailAndPassword,
   onAuthStateChanged as _onAuthStateChanged,
-  signInWithEmailAndPassword
+  signInWithEmailAndPassword,
+  updateProfile
 } from "firebase/auth"
-import { auth } from "./firebase"
-import { createUser } from "./user"
+import { auth } from "./client"
 
 export const signUp = async (
   name: string,
-  contact: number,
   email: string,
   password: string
-): Promise<APIResponse<null>> => {
+): Promise<{ success: boolean, error?: string }> => {
   try {
-    const result = await createUserWithEmailAndPassword(auth, email, password)
-    return await createUser(result.user.uid, name, contact, email)
+    await createUserWithEmailAndPassword(auth, email, password)
+    try {
+      await updateProfile(auth.currentUser!, { displayName: name })
+    } catch (error: any) {
+      console.log(error)
+    }
+    return { success: true }
   } catch (error: any) {
     let message = "Error during sign up, Try Again!"
     if (error) {
@@ -37,7 +41,7 @@ export const signUp = async (
 export const signIn = async (
   email: string,
   password: string
-): Promise<APIResponse<null>> => {
+): Promise<{ success: boolean, error?: string }> => {
   try {
     await signInWithEmailAndPassword(auth, email, password)
     return { success: true }
