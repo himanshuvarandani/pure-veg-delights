@@ -1,19 +1,20 @@
 "use client"
 
-import { createAddress } from "@/firebase/address"
-import useAuth from "@/hooks/useAuth"
+import api from "@/axios/instance"
+import { AxiosError } from "axios"
 import { useRouter } from "next/navigation"
 import React, { useState } from "react"
 import toast from "react-hot-toast"
 
 const initialAddress: Address = {
-  userId: "",
   addressLine1: "",
   addressLine2: "",
   pincode: 0,
   city: "",
   state: "",
-  default: false,
+  country: "India",
+  isActive: true,
+  isDefault: false,
   createdAt: new Date(),
   updatedAt: new Date(),
 }
@@ -21,7 +22,6 @@ const initialAddress: Address = {
 const NewAddress = (
   { from }: { from: "Page" | "Modal" }
 ) => {
-  const { user } = useAuth()
   const [address, setAddress] = useState<Address>(initialAddress)
   const router = useRouter()
 
@@ -40,22 +40,23 @@ const NewAddress = (
   const onSubmit = (e: any) => {
     e.preventDefault()
 
-    createAddress({
-      ...address,
-      userId: user?.uid!,
-    })
+    api.post("/address/create", address)
       .then((response) => {
-        if (response.success && response.data)
-          if (from === "Page") {
-            toast.success("Address Created")
+        if (from === "Page") {
+          toast.success("Address Created Successfully")
+          if (response.data)
             router.push(`/account/address/${response.data.addressId}`)
-          } else {
-            toast.success("Address Created, Select Address again")
-            router.back()
-          }
-        else toast.error(response.error!)
+          else
+            router.push(`/account/addresses`)
+        } else {
+          toast.success("Address Created, Select Address again")
+          router.back()
+        }
       })
-      .catch((e) => toast.error("Error Creating Address"))
+      .catch((error: AxiosError) => {
+        console.log(error)
+        toast.error(error.response?.statusText || "Address Creation Failed")
+      })
   }
 
   return (

@@ -57,14 +57,15 @@ type OrderWithId = { id: string } & Order
 
 type Address = {
   id?: string
-  userId: string
   name?: string
   addressLine1: string
   addressLine2: string
   pincode: number
   city: string
   state: string
-  default: boolean
+  country: string
+  isActive: boolean
+  isDefault: boolean
   createdAt: Date
   updatedAt: Date
 }
