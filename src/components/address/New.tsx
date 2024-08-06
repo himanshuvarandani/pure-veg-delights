@@ -7,6 +7,7 @@ import React, { useState } from "react"
 import toast from "react-hot-toast"
 
 const initialAddress: Address = {
+  name: "",
   addressLine1: "",
   addressLine2: "",
   pincode: 0,
@@ -38,7 +39,7 @@ const NewAddress = (
     }))
   }
   
-  const onSubmit = (e: any) => {
+  const createAddress = (e: any) => {
     e.preventDefault()
 
     if (loading) return
@@ -65,7 +66,7 @@ const NewAddress = (
 
   return (
     <form
-      onSubmit={onSubmit}
+      onSubmit={createAddress}
       className="w-full flex flex-col space-y-5 p-5 sm:px-10"
     >
       <p className="text-center text-lg text-orange-550 font-bold">Add New Address</p>

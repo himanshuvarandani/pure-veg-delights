@@ -1,19 +1,22 @@
 "use client"
 
-import { fetchAddressById, updateAddress } from "@/firebase/address"
+import api from "@/axios/instance"
 import useAuth from "@/hooks/useAuth"
+import { AxiosError } from "axios"
 import { useRouter } from "next/navigation"
 import React, { useEffect, useState } from "react"
 import toast from "react-hot-toast"
 
 const initialAddress: Address = {
-  userId: "",
+  name: "",
   addressLine1: "",
   addressLine2: "",
   pincode: 0,
   city: "",
   state: "",
-  default: false,
+  country: "India",
+  isActive: false,
+  isDefault: false,
   createdAt: new Date(),
   updatedAt: new Date(),
 }
@@ -21,24 +24,24 @@ const initialAddress: Address = {
 const UpdateAddress = (
   { addressId, from }: { addressId: string, from: "Page" | "Modal" }
 ) => {
-  const { isLoading, user } = useAuth()
   const [address, setAddress] = useState<Address>(initialAddress)
+  const [loading, setLoading] = useState(false)
   const router = useRouter()
-
+  
   useEffect(() => {
-    if (isLoading || !user) return
+    if (loading || !addressId) return
 
-    fetchAddressById(user.uid, addressId)
-      .then(response => {
-        if (response.success && response.data && response.data.address !== null) {
-          setAddress(response.data.address)
-        } else {
-          toast.error(response.error!)
-          router.push("/404")
-        }
+    setLoading(true)
+    api.get(`/addresses/${addressId}`)
+      .then((response) => {
+        setAddress(response.data as Address)
       })
-      .catch((e) => toast.error("Error Fetching Address"))
-  }, [isLoading, user, addressId])
+      .catch((error: AxiosError) => {
+        console.log("Error Fetching Address ->", error)
+        toast.error(error.response?.statusText || "Error Fetching Address")
+      })
+      .finally(() => setLoading(false))
+  }, [addressId])
 
   const handleCredentials = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, type, value, checked } = e.target
@@ -52,24 +55,33 @@ const UpdateAddress = (
     }))
   }
   
-  const onSubmit = (e: any) => {
+  const updateAddress = (e: any) => {
     e.preventDefault()
 
-    updateAddress(user?.uid!, address)
+    if (loading || !addressId) return
+
+    setLoading(true)
+    api.put(`/addresses/${addressId}`, address)
       .then((response) => {
-        if (response.success)
-          if (from === "Modal") {
-            toast.success("Address Updated, Select Address again")
-            router.back()
-          } else toast.success("Address Updated")
-        else toast.error(response.error!)
+        if (from === "Page") {
+          toast.success("Address Updated")
+          if (response.data.addressId !== addressId)
+            router.replace(`/account/address/${response.data.addressId}`)
+        } else {
+          toast.success("Address Updated, Select Address again")
+          router.back()
+        }
       })
-      .catch((e) => toast.error("Error Updating Address"))
+      .catch((error: AxiosError) => {
+        console.log("Error Updating Address ->", error)
+        toast.error(error.response?.statusText || "Error Updating Address")
+      })
+      .finally(() => setLoading(false))
   }
 
   return (
     <form
-      onSubmit={onSubmit}
+      onSubmit={updateAddress}
       className="w-full flex flex-col space-y-5 p-5 sm:px-10"
     >
       <p className="text-center text-lg text-orange-550 font-bold">Update Address</p>
@@ -135,7 +147,7 @@ const UpdateAddress = (
       </div>
       <div className="flex flex-col space-y-1">
         <label htmlFor="state">
-          Address Name <span className="text-xs">(for reference)</span>
+          Address Name <span className="text-xs">(for reference)</span> *
         </label>
         <input
           name="name"

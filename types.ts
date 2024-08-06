@@ -57,7 +57,7 @@ type OrderWithId = { id: string } & Order
 
 type Address = {
   id?: string
-  name?: string
+  name: string
   addressLine1: string
   addressLine2: string
   pincode: number

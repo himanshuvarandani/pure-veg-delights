@@ -55,6 +55,7 @@ export async function POST(request: NextRequest) {
         // Add the new address and set it as default if required
         transaction.set(newAddressRef, {
           userId,
+          name,
           addressLine1,
           addressLine2,
           city,
@@ -74,6 +75,7 @@ export async function POST(request: NextRequest) {
       )
     } catch (err: any) {
       const error: FirebaseAppError = err
+      console.log("Create Address API Error -> ", error)
       return NextResponse.json(
         { error: error.message },
         { status: 500, statusText: "Address Creation Failed" }
