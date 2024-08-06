@@ -45,8 +45,10 @@ export async function POST(request: NextRequest) {
 
         // Unset the current default address if it exists
         if (!defaultAddressSnapshot.empty) {
-          const defaultAddressDoc = defaultAddressSnapshot.docs[0]
-          transaction.update(defaultAddressDoc.ref, { isDefault: false })
+          if (isDefault) {
+            const defaultAddressDoc = defaultAddressSnapshot.docs[0]
+            transaction.update(defaultAddressDoc.ref, { isDefault: false })
+          }
         } else {
           // If there is no current default address, ensure the new address is set as default
           isDefault = true

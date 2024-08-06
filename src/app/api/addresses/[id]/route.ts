@@ -54,7 +54,6 @@ export async function PUT(
         state,
         pincode,
         country,
-        isDefault = false,
       } = await request.json()
       
       // Validation
@@ -105,7 +104,7 @@ export async function PUT(
         // Run Firestore transaction
         const newAddressRef = addressesRef.doc()
         await firestore.runTransaction(async (transaction) => {
-          transaction.update(addressRef, { isActive: null })
+          transaction.update(addressRef, { isActive: false, isDefault: false })
 
           transaction.set(newAddressRef, {
             userId,
@@ -117,7 +116,7 @@ export async function PUT(
             pincode,
             country,
             isActive: true,
-            isDefault,
+            isDefault: currentAddress.isDefault,
             createdAt: FieldValue.serverTimestamp(),
             updatedAt: FieldValue.serverTimestamp(),
           })
