@@ -53,8 +53,10 @@ const AddressCard = ({
 
       <div>
         <p className="break-words px-2">
-          {address.addressLine1}, {!address.addressLine2? null : address.addressLine2 + ", "}{address.city},
-          {address.state} - {address.pincode}
+          {address.addressLine1}, {!address.addressLine2
+            ? null
+            : address.addressLine2 + ", "
+          } {address.city}, {address.state} - {address.pincode}
         </p>
       </div>
 

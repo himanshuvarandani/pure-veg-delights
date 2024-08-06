@@ -18,7 +18,8 @@ export async function GET(
       const addressesRef = firestore.collection('addresses')
       const addressDoc = await addressesRef.doc(addressId).get()
       
-      if (!addressDoc.exists || addressDoc.data()?.userId !== userId) {
+      const address = addressDoc.data()
+      if (!addressDoc.exists || address?.userId !== userId || !address.isActive) {
         return NextResponse.json({}, {
           status: 404,
           statusText: "Address Not Found"
@@ -26,7 +27,7 @@ export async function GET(
       }
 
       return NextResponse.json(
-        { id: addressDoc.id, ...addressDoc.data() },
+        { id: addressDoc.id, ...address },
         { status: 200 }
       )
     } catch (err: any) {
@@ -73,10 +74,10 @@ export async function PUT(
       
       // Check if the address exists and userId matches or not
       const addressRef = addressesRef.doc(addressId)
-
       const addressDoc = await addressRef.get()
       const currentAddress = addressDoc.data()
-      if (!addressDoc.exists || currentAddress?.userId !== userId) {
+
+      if (!addressDoc.exists || currentAddress?.userId !== userId || !currentAddress.isActive) {
         return NextResponse.json({}, {
           status: 404,
           statusText: "Address Not Found"
@@ -149,6 +150,70 @@ export async function PUT(
       return NextResponse.json(
         { error: error.message },
         { status: 500, statusText: "Error Updating Address" }
+      )
+    }
+  })
+}
+
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: { id: string } },
+) {
+  return authenticate(request, async () => {
+    try {
+      const decodedToken: DecodedIdToken = JSON.parse(request.headers.get("x-decoded-token") as string)
+      const userId = decodedToken.uid
+      
+      const addressId = params.id
+      const addressesRef = firestore.collection('addresses')
+      const ordersRef = firestore.collection('orders')
+      
+      // Check if the address exists and userId matches or not
+      const addressRef = addressesRef.doc(addressId)
+      const addressDoc = await addressRef.get()
+      const address = addressDoc.data()
+
+      if (!addressDoc.exists || address?.userId !== userId || !address.isActive) {
+        return NextResponse.json({}, {
+          status: 404,
+          statusText: "Address Not Found"
+        })
+      }
+
+      // Run Firestore transaction
+      await firestore.runTransaction(async (transaction) => {
+        if (address?.isDefault) {
+          const addressQuery = addressesRef
+              .where('userId', '==', userId)
+              .where('isActive', '==', true)
+              .orderBy("updatedAt")
+              .limit(1)
+          const addressSnapshot = await addressQuery.get()
+
+          if (!addressSnapshot.empty) {
+            const newDefaultAddressDoc = addressSnapshot.docs[0]
+            transaction.update(newDefaultAddressDoc.ref, { isDefault: true })
+          }
+        }
+        
+        const ordersSnapshot = await ordersRef.where('addressId', '==', addressId).get()
+        if (!ordersSnapshot.empty) {
+          transaction.update(addressRef, { isActive: false, isDefault: false })
+        } else {
+          transaction.delete(addressRef)
+        }
+      })
+
+      return NextResponse.json({}, {
+        status: 200,
+        statusText: "Address Deleted Successfully"
+      })
+    } catch (err: any) {
+      const error: FirebaseAppError = err
+      console.log("Delete Address API Error -> ", error)
+      return NextResponse.json(
+        { error: error.message },
+        { status: 500, statusText: "Error Deleting Address" }
       )
     }
   })

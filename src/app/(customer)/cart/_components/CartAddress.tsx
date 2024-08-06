@@ -47,6 +47,18 @@ const CartAddress = ({ address, updateAddress }: CartAddressProps) => {
       .finally(() => setLoading(false))
   }
 
+  const fetchAllAddresses = () => {
+    api.get("/addresses")
+      .then((response) => {
+        setAllAddresses(response.data.addresses)
+      })
+      .catch((error: AxiosError) => {
+        console.log("Error Fetching All Addresses ->", error)
+        toast.error(error.response?.statusText || "Error Fetching All Addresses")
+      })
+      .finally(() => setLoading(false))
+  }
+
   useEffect(() => {
     if (pathname != "/cart") return
     if (loading) return
@@ -62,13 +74,7 @@ const CartAddress = ({ address, updateAddress }: CartAddressProps) => {
   useEffect(() => {
     if (pathname != "/cart") return
     
-    // fetchAllAddresses(user.uid)
-    //   .then(response => {
-    //     if (response.success) {
-    //       if (response.data) setAllAddresses(response.data?.addresses)
-    //     } else toast.error(response.error!)
-    //   })
-    //   .catch(() => toast.error("Error Fetching All Addresses"))
+    fetchAllAddresses()
   }, [pathname])
 
   return (

@@ -38,6 +38,7 @@ export async function POST(request: NextRequest) {
         // Find the current default address
         const defaultAddressQuery = addressesRef
           .where('userId', '==', userId)
+          .where('isActive', '==', true)
           .where('isDefault', '==', true)
           .limit(1)
 

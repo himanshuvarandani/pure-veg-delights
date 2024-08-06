@@ -18,17 +18,19 @@ export async function PUT(
       const addressRef = addressesRef.doc(addressId)
       const addressDoc = await addressRef.get()
       
-      if (!addressDoc.exists || addressDoc.data()?.userId !== userId) {
+      const address = addressDoc.data()
+      if (!addressDoc.exists || address?.userId !== userId || !address.isActive) {
         return NextResponse.json({}, {
           status: 404,
           statusText: "Address Not Found"
         })
       }
 
-      if (!addressDoc.data()?.isDefault) {
+      if (!address.isDefault) {
         await firestore.runTransaction(async (transaction) => {
           const defaultAddressQuery = addressesRef
               .where('userId', '==', userId)
+              .where('isActive', '==', true)
               .where('isDefault', '==', true)
               .limit(1)
           const defaultAddressSnapshot = await defaultAddressQuery.get()

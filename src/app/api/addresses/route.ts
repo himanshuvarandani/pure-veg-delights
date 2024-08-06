@@ -2,7 +2,7 @@ import { firestore } from "@/firebase/server"
 import { FirebaseAppError } from "firebase-admin/app"
 import { DecodedIdToken } from "firebase-admin/auth"
 import { NextRequest, NextResponse } from "next/server"
-import { authenticate } from "../../authenticate"
+import { authenticate } from "../authenticate"
 
 export async function GET(request: NextRequest) {
   return authenticate(request, async () => {
@@ -12,31 +12,23 @@ export async function GET(request: NextRequest) {
 
       const addressesRef = firestore.collection('addresses')
 
-      const defaultAddressQuery = addressesRef
+      const addressQuery = addressesRef
           .where('userId', '==', userId)
           .where('isActive', '==', true)
-          .where('isDefault', '==', true)
-          .limit(1)
-      const defaultAddressSnapshot = await defaultAddressQuery.get()
-      
-      if (defaultAddressSnapshot.empty) {
-        return NextResponse.json({}, {
-          status: 404,
-          statusText: "Default Address Not Found"
-        })
-      }
+          .orderBy("updatedAt", "desc")
+      const addressSnapshot = await addressQuery.get()
 
-      const defaultAddressDoc = defaultAddressSnapshot.docs[0]
-      return NextResponse.json(
-        { id: defaultAddressDoc.id, ...defaultAddressDoc.data() },
-        { status: 200 }
-      )
+      const addresses = addressSnapshot.docs.map(address => {
+        return { id: address.id, ...address.data() }
+      })
+
+      return NextResponse.json({ addresses }, { status: 200 })
     } catch (err: any) {
       const error: FirebaseAppError = err
-      console.log("Fetch Default Address API Error -> ", error)
+      console.log("Fetch All Addresses API Error -> ", error)
       return NextResponse.json(
         { error: error.message },
-        { status: 500, statusText: "Error Fetching Default Address" }
+        { status: 500, statusText: "Error Fetching All Addresses" }
       )
     }
   })

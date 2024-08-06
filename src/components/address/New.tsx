@@ -139,7 +139,7 @@ const NewAddress = (
       </div>
       <div className="flex space-x-1">
         <input
-          name="default"
+          name="isDefault"
           type="checkbox"
           onChange={handleCredentials}
         />
