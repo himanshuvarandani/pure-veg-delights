@@ -23,6 +23,7 @@ const NewAddress = (
   { from }: { from: "Page" | "Modal" }
 ) => {
   const [address, setAddress] = useState<Address>(initialAddress)
+  const [loading, setLoading] = useState(false)
   const router = useRouter()
 
   const handleCredentials = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -40,7 +41,9 @@ const NewAddress = (
   const onSubmit = (e: any) => {
     e.preventDefault()
 
-    api.post("/address/create", address)
+    if (loading) return
+    setLoading(true)
+    api.post("/addresses/new", address)
       .then((response) => {
         if (from === "Page") {
           toast.success("Address Created Successfully")
@@ -54,9 +57,10 @@ const NewAddress = (
         }
       })
       .catch((error: AxiosError) => {
-        console.log(error)
+        console.log("Error Creating Address ->", error)
         toast.error(error.response?.statusText || "Address Creation Failed")
       })
+      .finally(() => setLoading(false))
   }
 
   return (
@@ -122,7 +126,7 @@ const NewAddress = (
       </div>
       <div className="flex flex-col space-y-1">
         <label htmlFor="name">
-          Address Name <span className="text-xs">(for reference)</span>
+          Address Name <span className="text-xs">(for reference)</span> *
         </label>
         <input
           name="name"
@@ -141,7 +145,10 @@ const NewAddress = (
         <label htmlFor="default">Make this as default address</label>
       </div>
       <div className="text-center text-sm">
-        <button className="w-full rounded-2xl bg-orange-550 text-lg px-4 py-2 mb-2">
+        <button
+          className="w-full rounded-2xl bg-orange-550 text-lg px-4 py-2 mb-2"
+          disabled={loading}
+        >
           Create
         </button>
       </div>
