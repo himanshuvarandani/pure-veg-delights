@@ -1,4 +1,5 @@
-import { todaySpecialProducts } from "@/firebase/products"
+import api from "@/axios/instance"
+import { AxiosError } from "axios"
 import ProductsList from "./List"
 
 type PropsType = {
@@ -6,8 +7,16 @@ type PropsType = {
 }
 
 const TodaySpecial = async ({ theme }: PropsType) => {
-  const products: Array<Product> = await todaySpecialProducts()
-
+  const fetchTodaySpecialProducts = async (): Promise<Array<Product>> => {
+    return await api.get("/products/today-special")
+      .then(response => response.data.products)
+      .catch((error: AxiosError) => {
+        console.log("Error Fetching Today's Special Products ->", error)
+        return []
+      })
+  }
+  const products: Array<Product> = await fetchTodaySpecialProducts()
+  
   return (
     <div className={`py-10 px-5 sm:px-10 lg:px-20
       ${theme === "orange" ? "bg-orange-500" : "bg-white"}

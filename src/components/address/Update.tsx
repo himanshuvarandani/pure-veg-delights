@@ -1,7 +1,6 @@
 "use client"
 
 import api from "@/axios/instance"
-import useAuth from "@/hooks/useAuth"
 import { AxiosError } from "axios"
 import { useRouter } from "next/navigation"
 import React, { useEffect, useState } from "react"
