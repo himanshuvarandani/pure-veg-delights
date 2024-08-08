@@ -1,46 +1,46 @@
 "use client"
 
-import { fetchUserOrders } from "@/firebase/order"
-import useAuth from "@/hooks/useAuth"
+import api from "@/axios/instance"
+import OrdersLoading from "@/components/account/loading/Orders"
 import {
   faAngleLeft,
   faAngleRight,
   faMultiply
 } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { AxiosError } from "axios"
 import Link from "next/link"
 import { useEffect, useState } from "react"
 import toast from "react-hot-toast"
-import OrdersLoading from "./loading/Orders"
 
 const Orders = () => {
-  const { isLoading, user } = useAuth()
-  const [orders, setOrders] = useState<Array<OrderWithId>>([])
+  const [orders, setOrders] = useState<Array<Order>>([])
+  const [addresses, setAddresses] = useState<AddressesObject>({})
   const [products, setProducts] = useState<ProductsObject>({})
   const [totalPages, setTotalPages] = useState<number>(1)
   const [page, setPage] = useState<number>(1)
-  const [pageLoading, setPageLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
   const pageSize = 10
 
   useEffect(() => {
-    setPageLoading(true)
-    if (isLoading || !user) return
+    if (loading) return
 
-    fetchUserOrders(user.uid, page, pageSize)
+    setLoading(true)
+    api.get("/orders", { params: { page, limit: pageSize } })
       .then(response => {
-        if (response.success) {
-          if (response.data) {
-            setOrders(response.data.orders)
-            setProducts(response.data.products)
-            setTotalPages(response.data.totalPages)
-          }
-          setPageLoading(false)
-        } else toast.error(response.error!)
+        setOrders(response.data.orders as Array<Order>)
+        setAddresses(response.data.addresses as AddressesObject)
+        setProducts(response.data.products as ProductsObject)
+        setTotalPages(response.data.totalPages)
       })
-      .catch(() => toast.error("Error Fetching Orders"))
-  }, [isLoading, user, page])
+      .catch((error: AxiosError) => {
+        console.log("Error Fetching Orders ->", error)
+        toast.error(error.response?.statusText || "Error Fetching Orders")
+      })
+      .finally(() => setLoading(false))
+  }, [page, pageSize])
 
-  return pageLoading ? (<OrdersLoading />) : (
+  return loading ? (<OrdersLoading />) : (
     <div className="py-10">
       {!orders.length ? (
         <div className="flex flex-col items-center p-10">
@@ -68,7 +68,7 @@ const Orders = () => {
                     #{order.id}
                   </p>
                   <p className="pl-2 pt-1">
-                    {order.placedAt.toLocaleString("default", { dateStyle: "medium", timeStyle: "short" })}
+                    {order.timestamps.placed.toLocaleString("default", { dateStyle: "medium", timeStyle: "short" })}
                   </p>
                 </div>
                 <div className="flex justify-end py-2 sm:py-0">

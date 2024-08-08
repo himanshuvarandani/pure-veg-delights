@@ -26,7 +26,9 @@ type Cart = {
 }
 
 type Order = {
+  id?: string
   userId: string
+  address: string
   products: Array<{
     product: string
     quantity: number
@@ -34,29 +36,32 @@ type Order = {
   itemsPrice: number
   gst: number
   total: number
-  address: Address
-  placedAt: Date
+  type: OrderType
   status: OrderStatus
-  lastUpdated: Date
+  paymentStatus: PaymentStatus
+  timestamps: {
+    initiated: Date
+    placed: Date
+    accepted: Date
+    prepared: Date
+    completed: Date
+    cancelled: Date
+  }
   razorpayOrderId?: string
   razorpayPaymentId?: string
+  razorpaySignature?: string
 }
 
-type OrderStatus =
-  "Payment Pending" |
-  "Payment Failed" |
-  "Payment Cancelled" |
-  "Payment Done" |
-  "Accepted" |
-  "Ready For Pickup" |
-  "Delivering" |
-  "Completed" |
-  "Cancelled"
+type OrderType = "Dine In" | "Pickup" | "Delivery"
 
-type OrderWithId = { id: string } & Order
+type OrderStatus =
+  "Initiated" | "Placed" | "Accepted" | "Prepared" | "Completed" | "Cancelled"
+
+type PaymentStatus = "Pending" | "Failed" | "Completed"
 
 type Address = {
   id?: string
+  userId: string
   name: string
   addressLine1: string
   addressLine2: string
@@ -69,3 +74,5 @@ type Address = {
   createdAt: Date
   updatedAt: Date
 }
+
+type AddressesObject = { [key: string]: Address }

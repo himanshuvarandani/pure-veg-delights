@@ -1,46 +1,47 @@
 "use client"
 
+import api from "@/axios/instance"
+import OrderLoading from "@/components/account/loading/Order"
 import AddressCard from "@/components/address/Card"
-import { fetchOrderDetails } from "@/firebase/order"
 import { faMultiply } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import useAuth from "@/hooks/useAuth"
+import { AxiosError } from "axios"
 import Link from "next/link"
 import { useEffect, useState } from "react"
 import toast from "react-hot-toast"
-import OrderLoading from "./loading/Order"
+import AddressLoadingCard from "../address/Loading"
 
 type PropsType = { orderId: string }
 
 const Order = ({ orderId }: PropsType) => {
-  const { isLoading, user } = useAuth()
   const [order, setOrder] = useState<Order | null>(null)
+  const [address, setAddress] = useState<Address | null>(null)
   const [products, setProducts] = useState<ProductsObject>({})
-  const [pageLoading, setPageLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
-    setPageLoading(true)
-    if (isLoading || !user) return
-
-    fetchOrderDetails(orderId, user.uid)
+    if (loading && !orderId) return
+    
+    setLoading(true)
+    api.get(`/orders/${orderId}`)
       .then(response => {
-        if (response.success) {
-          if (response.data) {
-            setOrder(response.data?.order)
-            setProducts(response.data?.products)
-          }
-          setPageLoading(false)
-        } else toast.error(response.error!)
+        setOrder(response.data.order as Order)
+        setAddress(response.data.address as Address)
+        setProducts(response.data.products as ProductsObject)
       })
-      .catch(() => toast.error("Error Fetching Order Details"))
-  }, [isLoading, user])
+      .catch((error: AxiosError) => {
+        console.log("Error Fetching Order Details ->", error)
+        toast.error(error.response?.statusText || "Error Fetching Order Details")
+      })
+      .finally(() => setLoading(false))
+  }, [])
 
-  return pageLoading ? (<OrderLoading />) : (
+  return loading ? (<OrderLoading />) : (
     <div>
       {!order ? (
         <div className="flex flex-col items-center p-10">
           <p>
-            Wrong order Id. Please check the order id again.
+            Invalid order Id!
           </p>
           <Link
             href="/products"
@@ -85,11 +86,15 @@ const Order = ({ orderId }: PropsType) => {
             </h3>
             <div className="flex justify-center">
               <div className="w-full sm:w-3/4">
-                <AddressCard
-                  address={order.address}
-                  deletable={false}
-                  editable={false}
-                />
+                {!address ? (
+                  <AddressLoadingCard />
+                ) : (
+                  <AddressCard
+                    address={address}
+                    deletable={false}
+                    editable={false}
+                  />
+                )}
               </div>
             </div>
           </div>

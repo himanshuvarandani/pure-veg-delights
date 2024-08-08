@@ -7,6 +7,7 @@ import React, { useState } from "react"
 import toast from "react-hot-toast"
 
 const initialAddress: Address = {
+  userId: "",
   name: "",
   addressLine1: "",
   addressLine2: "",
