@@ -3,11 +3,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import Link from "next/link"
 
 type OrderProps = {
-  order: OrderWithId
+  order: Order
+  address: Address
   products: ProductsObject
 }
 
-const Order = ({ order, products }: OrderProps) => {
+const Order = ({ order, address, products }: OrderProps) => {
   return (
     <Link
       key={order.id}
@@ -22,7 +23,7 @@ const Order = ({ order, products }: OrderProps) => {
             #{order.id}
           </p>
           <p className="pl-2 pt-1">
-            {order.placedAt.toLocaleString(
+            {new Date(order.timestamps.placed).toLocaleString(
               "default",
               { dateStyle: "medium", timeStyle: "short" }
             )}
@@ -37,14 +38,11 @@ const Order = ({ order, products }: OrderProps) => {
                 : "bg-green-700 text-white"
             }`}
           >
-            {order.status === "Payment Done"
+            {order.status === "Placed"
               ? "Accept"
               : order.status === "Accepted"
-                ? "Ready For Delivery"
-                : (
-                  order.status === "Ready For Pickup" ||
-                  order.status === "Delivering"
-                )
+                ? "Mark as Prepared"
+                : order.status === "Prepared"
                   ? "Complete"
                   : order.status
             }

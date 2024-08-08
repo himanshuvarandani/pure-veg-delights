@@ -1,10 +1,10 @@
 "use client"
 
+import api from "@/axios/instance"
 import OrdersLoading from "@/components/account/loading/Orders"
-import { fetchUserOrders } from "@/firebase/order"
-import useAuth from "@/hooks/useAuth"
 import { faAngleLeft, faAngleRight } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { AxiosError } from "axios"
 import { useEffect, useState } from "react"
 import toast from "react-hot-toast"
 import Order from "./_components/Order"
@@ -12,32 +12,32 @@ import Order from "./_components/Order"
 type TabsType = "all" | "new" | "current" | "delivery"
 
 const AdminDashboard = () => {
-  const { isLoading, user } = useAuth()
   const [tab, setTab] = useState<TabsType>("current")
-  const [orders, setOrders] = useState<OrderWithId[]>([])
+  const [orders, setOrders] = useState<Array<Order>>([])
+  const [addresses, setAddresses] = useState<AddressesObject>({})
   const [products, setProducts] = useState<ProductsObject>({})
   const [totalPages, setTotalPages] = useState<number>(1)
   const [page, setPage] = useState<number>(1)
-  const [pageLoading, setPageLoading] = useState(true)
+  const [loading, setLoading] = useState(true)
   const pageSize = 10
 
   useEffect(() => {
-    setPageLoading(true)
-    if (isLoading || !user) return
+    if (loading) return
 
-    fetchUserOrders(user.uid, page, pageSize)
+    setLoading(true)
+    api.get("/orders", { params: { page, limit: pageSize } })
       .then(response => {
-        if (response.success) {
-          if (response.data) {
-            setOrders(response.data.orders)
-            setProducts(response.data.products)
-            setTotalPages(response.data.totalPages)
-          }
-          setPageLoading(false)
-        } else toast.error(response.error!)
+        setOrders(response.data.orders as Array<Order>)
+        setAddresses(response.data.addresses as AddressesObject)
+        setProducts(response.data.products as ProductsObject)
+        setTotalPages(response.data.totalPages)
       })
-      .catch(() => toast.error("Error Fetching Orders"))
-  }, [isLoading, user, page, tab])
+      .catch((error: AxiosError) => {
+        console.log("Error Fetching Orders ->", error)
+        toast.error(error.response?.statusText || "Error Fetching Orders")
+      })
+      .finally(() => setLoading(false))
+  }, [page, pageSize, tab])
 
   return (
     <div>
@@ -67,7 +67,7 @@ const AdminDashboard = () => {
           All Orders
         </button>
       </div>
-      {pageLoading ? (<OrdersLoading />) : (
+      {loading ? (<OrdersLoading />) : (
         <div className="py-10 px-2 xs:px-5">
           {!orders.length ? (
             <div className="flex flex-col items-center p-10">
@@ -76,7 +76,11 @@ const AdminDashboard = () => {
           ) : (
             <div className="flex flex-col items-center space-y-5">
               {orders.map(order => 
-                <Order order={order} products={products} />
+                <Order
+                  order={order}
+                  address={addresses[order.address]}
+                  products={products}
+                />
               )}
               {totalPages <= 1 ? null : (
                 <div
