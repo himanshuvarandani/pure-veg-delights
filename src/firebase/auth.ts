@@ -7,6 +7,7 @@ import {
   updateProfile
 } from "firebase/auth"
 import { auth } from "./client"
+import { FirebaseAppError } from "firebase-admin/app"
 
 export const signUp = async (
   name: string,
@@ -21,17 +22,22 @@ export const signUp = async (
       console.log(error)
     }
     return { success: true }
-  } catch (error: any) {
-    let message = "Error during sign up, Try Again!"
-    if (error) {
-      if(error.code === "auth/weak-password")
+  } catch (err: any) {
+    const error: FirebaseAppError = err
+
+    let message
+    switch (error.code) {
+      case "auth/weak-password":
         message = "Password is weak"
-      else if (error.code === "auth/email-already-in-use")
+        break
+      case "auth/email-already-in-use":
         message = "Email is already in use"
-      else if (error.code === "auth/invalid-email")
+        break
+      case "auth/invalid-email":
         message = "Invalid Email"
-      else if (error.code === "auth/network-request-failed")
-        message = "Check your Network Connection and Try Again!"
+        break
+      default:
+        message = "Error during sign up, Try Again!"
     }
 
     return { success: false, error: message }
@@ -45,13 +51,19 @@ export const signIn = async (
   try {
     await signInWithEmailAndPassword(auth, email, password)
     return { success: true }
-  } catch (error: any) {
-    let message = "Error during sign in, Try Again!"
-    if (error) {
-      if(error.code === "auth/invalid-credential")
+  } catch (err: any) {
+    const error: FirebaseAppError = err
+
+    let message
+    switch (error.code) {
+      case "auth/invalid-credential":
         message = "Invalid Credential"
-      else if (error.code === "auth/network-request-failed")
+        break
+      case "auth/network-request-failed":
         message = "Check your Network Connection and Try Again!"
+        break
+      default:
+        message = "Error during sign in, Try Again!"
     }
 
     return { success: false, error: message }

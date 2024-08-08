@@ -50,9 +50,11 @@ export async function GET(request: NextRequest) {
     )
     const productDetailsSnapshots = await Promise.all(productDetailsPromises)
 
-    const bestSellingProducts = productDetailsSnapshots.map(productDoc => {
-      return { id: productDoc.id, ...productDoc.data() }
-    })
+    const bestSellingProducts: Array<Product> = productDetailsSnapshots.map(
+      productDoc => {
+        return { id: productDoc.id, ...productDoc.data() } as Product
+      }
+    )
 
     return NextResponse.json({ products: bestSellingProducts }, { status: 200 })
   } catch (err: any) {

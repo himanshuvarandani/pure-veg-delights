@@ -18,7 +18,7 @@ export async function GET(request: NextRequest) {
       productsSnapshot = await productsQuery.get()
     }
 
-    const products: Record<string, Array<{}>> = {}
+    const products: CategoryProducts = {}
     productsSnapshot.docs.forEach(productDoc => {
       const product = productDoc.data()
 
@@ -26,7 +26,9 @@ export async function GET(request: NextRequest) {
         products[product.category] = []
       }
       
-      products[product.category].push({ id: productDoc.id, ...product })
+      products[product.category].push(
+        { id: productDoc.id, ...product } as Product
+      )
     })
 
     return NextResponse.json({ products }, { status: 200 })

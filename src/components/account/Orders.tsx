@@ -68,7 +68,7 @@ const Orders = () => {
                     #{order.id}
                   </p>
                   <p className="pl-2 pt-1">
-                    {order.timestamps.placed.toLocaleString("default", { dateStyle: "medium", timeStyle: "short" })}
+                    {new Date(order.timestamps.placed).toLocaleString("default", { dateStyle: "medium", timeStyle: "short" })}
                   </p>
                 </div>
                 <div className="flex justify-end py-2 sm:py-0">

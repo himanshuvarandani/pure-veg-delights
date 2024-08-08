@@ -53,8 +53,19 @@ export async function GET(request: NextRequest) {
       const productIds = new Set<string>()
 
       ordersSnapshot.forEach(orderDoc => {
-        const order = orderDoc.data() as Order
-        order.id = orderDoc.id
+        const orderData = orderDoc.data()
+        const order: Order = {
+          id: orderDoc.id,
+          ...orderData,
+          timestamps: {
+            initiated: orderData.timestamps.initiated?.toDate(),
+            placed: orderData.timestamps.placed?.toDate(),
+            accepted: orderData.timestamps.accepted?.toDate(),
+            prepared: orderData.timestamps.prepared?.toDate(),
+            completed: orderData.timestamps.completed?.toDate(),
+            cancelled: orderData.timestamps.cancelled?.toDate()
+          }
+        } as Order
         orders.push(order)
 
         addressIds.add(order.address)

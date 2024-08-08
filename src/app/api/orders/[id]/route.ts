@@ -20,13 +20,26 @@ export async function GET(
       const orderId = params.id
       const orderDoc = await ordersRef.doc(orderId).get()
 
-      const order = orderDoc.data() as Order
-      if (!orderDoc.exists || order?.userId !== userId) {
+      const orderData = orderDoc.data()
+      if (!orderDoc.exists || orderData?.userId !== userId) {
         return NextResponse.json({}, {
           status: 404,
           statusText: "Order Not Found"
         })
       }
+
+      const order: Order = {
+        id: orderDoc.id,
+        ...orderData,
+        timestamps: {
+          initiated: orderData.timestamps.initiated?.toDate(),
+          placed: orderData.timestamps.placed?.toDate(),
+          accepted: orderData.timestamps.accepted?.toDate(),
+          prepared: orderData.timestamps.prepared?.toDate(),
+          completed: orderData.timestamps.completed?.toDate(),
+          cancelled: orderData.timestamps.cancelled?.toDate()
+        }
+      } as Order
 
       const addressPromise = addressesRef.doc(order.address).get()
       const productPromises = order.products.map(

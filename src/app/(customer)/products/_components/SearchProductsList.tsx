@@ -6,10 +6,7 @@ const SearchProductsList = async (
   { query }: { query: string | undefined }
 ) => {
   const fetchProducts = async (): Promise<CategoryProducts> => {
-    let fetchProductURL = "/products"
-    if (query?.trim().length) fetchProductURL = `/products?q=${query}`
-
-    return await api.get(fetchProductURL)
+    return await api.get("/products", { params: { q: query } })
       .then(response => response.data.products)
       .catch((error: AxiosError) => {
         console.log(

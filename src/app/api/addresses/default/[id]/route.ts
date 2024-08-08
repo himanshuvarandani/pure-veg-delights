@@ -18,8 +18,8 @@ export async function PUT(
       const addressRef = addressesRef.doc(addressId)
       const addressDoc = await addressRef.get()
       
-      const address = addressDoc.data()
-      if (!addressDoc.exists || address?.userId !== userId || !address.isActive) {
+      const address = addressDoc.data() as Address
+      if (!addressDoc.exists || address.userId !== userId || !address.isActive) {
         return NextResponse.json({}, {
           status: 404,
           statusText: "Address Not Found"

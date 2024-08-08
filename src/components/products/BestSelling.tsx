@@ -10,7 +10,7 @@ const BestSelling = async ({ theme }: PropsType) => {
   const fetchBestSellingProducts = async (): Promise<Array<Product>> => {
     // const fromDate = new Date()
     // fromDate.setDate(fromDate.getDate() - 7)
-    // `/products/best-selling?fromDate=${fromDate.toLocaleDateString()}`
+    // { params: { fromDate } }
 
     return await api.get("/products/best-selling")
       .then(response => response.data.products)

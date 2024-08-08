@@ -40,7 +40,7 @@ export async function PUT(
       const orderDoc = await orderRef.get()
 
       const order = orderDoc.data() as Order
-      if (!orderDoc.exists || order?.userId !== userId)
+      if (!orderDoc.exists || order.userId !== userId)
         return NextResponse.json({}, {
           status: 404,
           statusText: "Order Not Found"

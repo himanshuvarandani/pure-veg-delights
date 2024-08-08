@@ -27,8 +27,16 @@ export async function GET(request: NextRequest) {
       }
 
       const defaultAddressDoc = defaultAddressSnapshot.docs[0]
+      const defaultAddressData = defaultAddressDoc.data()
+      const defaultAddress: Address = {
+        id: defaultAddressDoc.id,
+        ...defaultAddressData,
+        updatedAt: defaultAddressData.updatedAt.toDate(),
+        createdAt: defaultAddressData.createdAt.toDate()
+      } as Address
+      
       return NextResponse.json(
-        { id: defaultAddressDoc.id, ...defaultAddressDoc.data() },
+        defaultAddress,
         { status: 200 }
       )
     } catch (err: any) {

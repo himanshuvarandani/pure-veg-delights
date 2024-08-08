@@ -18,16 +18,23 @@ export async function GET(
       const addressesRef = firestore.collection('addresses')
       const addressDoc = await addressesRef.doc(addressId).get()
       
-      const address = addressDoc.data()
-      if (!addressDoc.exists || address?.userId !== userId || !address.isActive) {
+      const addressData = addressDoc.data()
+      if (!addressDoc.exists || addressData?.userId !== userId || !addressData.isActive) {
         return NextResponse.json({}, {
           status: 404,
           statusText: "Address Not Found"
         })
       }
 
+      const address: Address = {
+        id: addressDoc.id,
+        ...addressData,
+        updatedAt: addressData.updatedAt.toDate(),
+        createdAt: addressData.createdAt.toDate()
+      } as Address
+
       return NextResponse.json(
-        { id: addressDoc.id, ...address },
+        address,
         { status: 200 }
       )
     } catch (err: any) {
@@ -75,14 +82,13 @@ export async function PUT(
       // Check if the address exists and userId matches or not
       const addressRef = addressesRef.doc(addressId)
       const addressDoc = await addressRef.get()
-      const currentAddress = addressDoc.data()
+      const currentAddress = addressDoc.data() as Address
 
-      if (!addressDoc.exists || currentAddress?.userId !== userId || !currentAddress.isActive) {
+      if (!addressDoc.exists || currentAddress.userId !== userId || !currentAddress.isActive)
         return NextResponse.json({}, {
           status: 404,
           statusText: "Address Not Found"
         })
-      }
 
       // Change Validation
       if (
@@ -93,12 +99,11 @@ export async function PUT(
         state === currentAddress.state &&
         pincode === currentAddress.pincode &&
         country === currentAddress.country
-      ) {
+      )
         return NextResponse.json({}, {
           status: 500,
           statusText: "No Changes Detected"
         })
-      }
 
       const ordersSnapshot = await ordersRef.where('addressId', '==', addressId).get()
       if (!ordersSnapshot.empty) {
@@ -171,18 +176,17 @@ export async function DELETE(
       // Check if the address exists and userId matches or not
       const addressRef = addressesRef.doc(addressId)
       const addressDoc = await addressRef.get()
-      const address = addressDoc.data()
+      const address = addressDoc.data() as Address
 
-      if (!addressDoc.exists || address?.userId !== userId || !address.isActive) {
+      if (!addressDoc.exists || address.userId !== userId || !address.isActive)
         return NextResponse.json({}, {
           status: 404,
           statusText: "Address Not Found"
         })
-      }
 
       // Run Firestore transaction
       await firestore.runTransaction(async (transaction) => {
-        if (address?.isDefault) {
+        if (address.isDefault) {
           const addressQuery = addressesRef
               .where('userId', '==', userId)
               .where('isActive', '==', true)

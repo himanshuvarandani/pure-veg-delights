@@ -18,8 +18,15 @@ export async function GET(request: NextRequest) {
           .orderBy("updatedAt", "desc")
       const addressSnapshot = await addressQuery.get()
 
-      const addresses = addressSnapshot.docs.map(address => {
-        return { id: address.id, ...address.data() }
+      const addresses: Array<Address> = addressSnapshot.docs.map(addressDoc => {
+        const addressData = addressDoc.data()
+        const address: Address = {
+          id: addressDoc.id,
+          ...addressData,
+          updatedAt: addressData.updatedAt.toDate(),
+          createdAt: addressData.createdAt.toDate()
+        } as Address
+        return address
       })
 
       return NextResponse.json({ addresses }, { status: 200 })

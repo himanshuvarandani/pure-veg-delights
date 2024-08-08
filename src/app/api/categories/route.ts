@@ -7,9 +7,9 @@ export async function GET(request: NextRequest) {
     const categoriesRef = firestore.collection("categories")
     
     const categoriesSnapshot = await categoriesRef.get()
-    const categories = categoriesSnapshot.docs.map(categoryDoc => {
-      return categoryDoc.data().name
-    })
+    const categories: Array<string> = categoriesSnapshot.docs.map(
+      categoryDoc => { return categoryDoc.data().name }
+    )
 
     return NextResponse.json({ categories }, { status: 200 })
   } catch (err: any) {

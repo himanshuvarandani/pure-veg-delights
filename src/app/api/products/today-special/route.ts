@@ -12,8 +12,8 @@ export async function GET(request: NextRequest) {
     
     const productsSnapshot = await productsQuery.get()
 
-    const products = productsSnapshot.docs.map(productDoc => {
-      return { id: productDoc.id, ...productDoc.data() }
+    const products: Array<Product> = productsSnapshot.docs.map(productDoc => {
+      return { id: productDoc.id, ...productDoc.data() } as Product
     })
 
     return NextResponse.json({ products }, { status: 200 })
