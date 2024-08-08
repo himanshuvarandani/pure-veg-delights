@@ -3,9 +3,9 @@ import { FirebaseAppError } from "firebase-admin/app"
 import { NextRequest, NextResponse } from "next/server"
 
 export async function GET(request: NextRequest) {
+  const searchQuery = request.nextUrl.searchParams.get("q")
+  
   try {
-    const searchQuery = request.nextUrl.searchParams.get("q")
-
     const productsRef = firestore.collection("products")
 
     let productsSnapshot: FirebaseFirestore.QuerySnapshot<FirebaseFirestore.DocumentData, FirebaseFirestore.DocumentData>
@@ -34,7 +34,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ products }, { status: 200 })
   } catch (err: any) {
     const error: FirebaseAppError = err
-    console.log("Fetch All Addresses API Error -> ", error)
+    console.log("Fetch Products Error -> ", error)
     return NextResponse.json(
       { error: error.message },
       { status: 500, statusText: "Error Fetching Products" }

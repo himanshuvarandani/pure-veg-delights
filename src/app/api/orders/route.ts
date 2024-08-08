@@ -14,10 +14,10 @@ const razorpayInstance = new Razorpay({
 
 export async function GET(request: NextRequest) {
   return authenticate(request, async () => {
+    let page = Number(request.nextUrl.searchParams.get("page"))
+    let limit = Number(request.nextUrl.searchParams.get("limit"))
+    
     try {
-      let page = Number(request.nextUrl.searchParams.get("page"))
-      let limit = Number(request.nextUrl.searchParams.get("limit"))
-
       if (page <= 0) page = 1
       if (limit <= 0) limit = 10
       
@@ -121,16 +121,16 @@ type CrrateOrderRequest = {
 
 export async function POST(request: NextRequest) {
   return authenticate(request, async () => {
+    const {
+      addressId,
+      products,
+      itemsPrice,
+      gst,
+      total,
+      type = "Delivery"
+    }: CrrateOrderRequest = await request.json()
+    
     try {
-      const {
-        addressId,
-        products,
-        itemsPrice,
-        gst,
-        total,
-        type = "Delivery"
-      }: CrrateOrderRequest = await request.json()
-
       const decodedToken: DecodedIdToken = JSON.parse(request.headers.get("x-decoded-token") as string)
       const userId = decodedToken.uid
 

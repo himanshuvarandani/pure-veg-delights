@@ -19,10 +19,10 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ products }, { status: 200 })
   } catch (err: any) {
     const error: FirebaseAppError = err
-    console.log("Fetch All Addresses API Error -> ", error)
+    console.log("Fetch Today's Special Products API Error -> ", error)
     return NextResponse.json(
       { error: error.message },
-      { status: 500, statusText: "Error Fetching Products" }
+      { status: 500, statusText: "Error Fetching Today's Special Products" }
     )
   }
 }

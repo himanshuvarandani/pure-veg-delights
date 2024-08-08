@@ -17,13 +17,13 @@ export async function PUT(
   { params }: { params: { id: string } }
 ) {
   return authenticate(request, async () => {
+    const {
+      razorpayPaymentId,
+      razorpayOrderId,
+      razorpaySignature
+    }: VerifyPaymentRequest = await request.json()
+    
     try {
-      const {
-        razorpayPaymentId,
-        razorpayOrderId,
-        razorpaySignature
-      }: VerifyPaymentRequest = await request.json()
-
       if (!razorpayPaymentId || !razorpayOrderId || !razorpaySignature)
         return NextResponse.json({}, {
           status: 400,

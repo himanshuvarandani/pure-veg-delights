@@ -3,10 +3,10 @@ import { FirebaseAppError } from "firebase-admin/app"
 import { NextRequest, NextResponse } from "next/server"
 
 export async function GET(request: NextRequest) {
+  const fromDate = request.nextUrl.searchParams.get("fromDate")
+  const toDate = request.nextUrl.searchParams.get("toDate")
+  
   try {
-    const fromDate = request.nextUrl.searchParams.get("fromDate")
-    const toDate = request.nextUrl.searchParams.get("toDate")
-
     const productsRef = firestore.collection("products")
     const ordersRef = firestore.collection("orders")
 
@@ -59,10 +59,10 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ products: bestSellingProducts }, { status: 200 })
   } catch (err: any) {
     const error: FirebaseAppError = err
-    console.log("Fetch All Addresses API Error -> ", error)
+    console.log("Fetch Best Selling Products API Error -> ", error)
     return NextResponse.json(
       { error: error.message },
-      { status: 500, statusText: "Error Fetching Products" }
+      { status: 500, statusText: "Error Fetching Best Selling Products" }
     )
   }
 }

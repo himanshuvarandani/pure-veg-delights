@@ -7,18 +7,18 @@ import { authenticate } from "../../authenticate"
 
 export async function POST(request: NextRequest) {
   return authenticate(request, async () => {
+    let {
+      name,
+      addressLine1,
+      addressLine2,
+      city,
+      state,
+      pincode,
+      country,
+      isDefault = false,
+    } = await request.json()
+    
     try {
-      let {
-        name,
-        addressLine1,
-        addressLine2,
-        city,
-        state,
-        pincode,
-        country,
-        isDefault = false,
-      } = await request.json()
-      
       // Validation
       if (!name || !addressLine1 || !city || !state || !pincode || !country) {
         return NextResponse.json({}, {

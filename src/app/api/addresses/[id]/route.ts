@@ -53,17 +53,17 @@ export async function PUT(
   { params }: { params: { id: string } },
 ) {
   return authenticate(request, async () => {
+    let {
+      name,
+      addressLine1,
+      addressLine2,
+      city,
+      state,
+      pincode,
+      country,
+    } = await request.json()
+    
     try {
-      let {
-        name,
-        addressLine1,
-        addressLine2,
-        city,
-        state,
-        pincode,
-        country,
-      } = await request.json()
-      
       // Validation
       if (!name || !addressLine1 || !city || !state || !pincode || !country) {
         return NextResponse.json({}, {
