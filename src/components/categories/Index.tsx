@@ -19,7 +19,7 @@ const Categories = async () => {
         Categories
       </h3>
       <div className="flex flex-wrap justify-between items-center">
-        {categories.map(category => (
+        {categories && categories.map(category => (
           <Link
             key={category}
             href={`/products?q=${category}`}
