@@ -9,7 +9,7 @@ type PropsType = {
 const ProductsList = ({ classNames, theme, products=[] }: PropsType) => {
   return (
     <div className={`flex flex-wrap ${classNames}`}>
-      {products.map((product: Product) => (
+      {products && products.map((product: Product) => (
         <ProductCard theme={theme} product={product} key={product.id} />
       ))}
     </div>
