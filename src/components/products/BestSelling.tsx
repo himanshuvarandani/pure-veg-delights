@@ -1,4 +1,5 @@
-import { bestSellingProducts } from "@/firebase/products"
+import api from "@/axios/instance"
+import { AxiosError } from "axios"
 import ProductsList from "./List"
 
 type PropsType = {
@@ -6,7 +7,20 @@ type PropsType = {
 }
 
 const BestSelling = async ({ theme }: PropsType) => {
-  const products: Array<Product> = await bestSellingProducts()
+  const fetchBestSellingProducts = async (): Promise<Array<Product>> => {
+    // const fromDate = new Date()
+    // fromDate.setDate(fromDate.getDate() - 7)
+    // { params: { fromDate } }
+
+    return await api.get("/products/best-selling")
+      .then(response => response.data.products)
+      .catch((error: AxiosError) => {
+        console.log("Error Fetching Best Selling Products ->", error)
+        return []
+      })
+  }
+
+  const products: Array<Product> = await fetchBestSellingProducts()
 
   return (
     <div className={`py-10 px-5 sm:px-10 lg:px-20

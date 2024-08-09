@@ -1,15 +1,11 @@
 "use client"
 
+import api from "@/axios/instance"
 import AddressCard from "@/components/address/Card"
 import AddressLoadingCard from "@/components/address/Loading"
-import {
-  fetchAddressById,
-  fetchAllAddresses,
-  fetchDefaultAddress
-} from "@/firebase/address"
-import useAuth from "@/hooks/useAuth"
 import { faPenToSquare, faPlus } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { AxiosError } from "axios"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useEffect, useState } from "react"
@@ -22,64 +18,64 @@ type CartAddressProps = {
 }
 
 const CartAddress = ({ address, updateAddress }: CartAddressProps) => {
-  const { isLoading, user } = useAuth()
   const pathname = usePathname()
   const [allAddresses, setAllAddresses] = useState<Address[]>([])
   const [showModal, setShowModal] = useState(false)
-  const [addLoading, setAddLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
 
-  useEffect(() => {
-    if (isLoading || !user) return
-
-    fetchDefaultAddress(user.uid)
-      .then(response => {
-        if (response.success) {
-          if (response.data) updateAddress(response.data?.address)
-        } else toast.error(response.error!)
+  const fetchDefaultAddress = () => {
+    api.get("/addresses/default")
+      .then((response) => {
+        updateAddress(response.data as Address)
       })
-      .catch(() => toast.error("Error Fetching Default Address"))
-      .finally(() => setAddLoading(false))
-  }, [isLoading, user])
-  
-  useEffect(() => {
-    if (isLoading || !user) return
-    if (pathname != "/cart") return
-    if (addLoading) return
+      .catch((error: AxiosError) => {
+        console.log("Error Fetching Default Address ->", error)
+        toast.error(error.response?.statusText || "Error Fetching Default Address")
+      })
+      .finally(() => setLoading(false))
+  }
 
-    setAddLoading(true)
+  const fetchAddress = (addressId: string) => {
+    api.get(`/addresses/${addressId}`)
+      .then((response) => {
+        updateAddress(response.data as Address)
+      })
+      .catch((error: AxiosError) => {
+        console.log("Error Fetching Address ->", error)
+        toast.error(error.response?.statusText || "Error Fetching Address")
+      })
+      .finally(() => setLoading(false))
+  }
+
+  const fetchAllAddresses = () => {
+    api.get("/addresses")
+      .then((response) => {
+        setAllAddresses(response.data.addresses)
+      })
+      .catch((error: AxiosError) => {
+        console.log("Error Fetching All Addresses ->", error)
+        toast.error(error.response?.statusText || "Error Fetching All Addresses")
+      })
+      .finally(() => setLoading(false))
+  }
+
+  useEffect(() => {
+    if (pathname != "/cart") return
+    if (loading) return
+
+    setLoading(true)
     if (!address) {
-      fetchDefaultAddress(user.uid)
-        .then(response => {
-          if (response.success) {
-            if (response.data) updateAddress(response.data?.address)
-          } else toast.error(response.error!)
-        })
-        .catch(() => toast.error("Error Fetching Default Address"))
-        .finally(() => setAddLoading(false))
+      fetchDefaultAddress()
     } else {
-      fetchAddressById(user.uid, address.id!)
-        .then(response => {
-          if (response.success) {
-            if (response.data) updateAddress(response.data?.address)
-          } else toast.error(response.error!)
-        })
-        .catch(() => toast.error("Error Fetching Updated Address"))
-        .finally(() => setAddLoading(false))
+      fetchAddress(address.id!)
     }
   }, [pathname])
 
   useEffect(() => {
-    if (isLoading || !user) return
     if (pathname != "/cart") return
     
-    fetchAllAddresses(user.uid)
-      .then(response => {
-        if (response.success) {
-          if (response.data) setAllAddresses(response.data?.addresses)
-        } else toast.error(response.error!)
-      })
-      .catch(() => toast.error("Error Fetching All Addresses"))
-  }, [isLoading, user, pathname])
+    fetchAllAddresses()
+  }, [pathname])
 
   return (
     <div className="flex flex-col items-center">
@@ -117,7 +113,7 @@ const CartAddress = ({ address, updateAddress }: CartAddressProps) => {
             </Link>
           ) : (
             <div className="w-full sm:w-3/4">
-              {addLoading ? (<AddressLoadingCard />) : (
+              {loading ? (<AddressLoadingCard />) : (
                 <AddressCard
                   address={address}
                   deletable={false}

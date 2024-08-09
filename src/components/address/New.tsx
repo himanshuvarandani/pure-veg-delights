@@ -1,19 +1,22 @@
 "use client"
 
-import { createAddress } from "@/firebase/address"
-import useAuth from "@/hooks/useAuth"
+import api from "@/axios/instance"
+import { AxiosError } from "axios"
 import { useRouter } from "next/navigation"
 import React, { useState } from "react"
 import toast from "react-hot-toast"
 
 const initialAddress: Address = {
   userId: "",
+  name: "",
   addressLine1: "",
   addressLine2: "",
   pincode: 0,
   city: "",
   state: "",
-  default: false,
+  country: "India",
+  isActive: true,
+  isDefault: false,
   createdAt: new Date(),
   updatedAt: new Date(),
 }
@@ -21,8 +24,8 @@ const initialAddress: Address = {
 const NewAddress = (
   { from }: { from: "Page" | "Modal" }
 ) => {
-  const { user } = useAuth()
   const [address, setAddress] = useState<Address>(initialAddress)
+  const [loading, setLoading] = useState(false)
   const router = useRouter()
 
   const handleCredentials = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -37,30 +40,34 @@ const NewAddress = (
     }))
   }
   
-  const onSubmit = (e: any) => {
+  const createAddress = (e: any) => {
     e.preventDefault()
 
-    createAddress({
-      ...address,
-      userId: user?.uid!,
-    })
+    if (loading) return
+    setLoading(true)
+    api.post("/addresses/new", address)
       .then((response) => {
-        if (response.success && response.data)
-          if (from === "Page") {
-            toast.success("Address Created")
+        if (from === "Page") {
+          toast.success("Address Created Successfully")
+          if (response.data)
             router.push(`/account/address/${response.data.addressId}`)
-          } else {
-            toast.success("Address Created, Select Address again")
-            router.back()
-          }
-        else toast.error(response.error!)
+          else
+            router.push(`/account/addresses`)
+        } else {
+          toast.success("Address Created, Select Address again")
+          router.back()
+        }
       })
-      .catch((e) => toast.error("Error Creating Address"))
+      .catch((error: AxiosError) => {
+        console.log("Error Creating Address ->", error)
+        toast.error(error.response?.statusText || "Address Creation Failed")
+      })
+      .finally(() => setLoading(false))
   }
 
   return (
     <form
-      onSubmit={onSubmit}
+      onSubmit={createAddress}
       className="w-full flex flex-col space-y-5 p-5 sm:px-10"
     >
       <p className="text-center text-lg text-orange-550 font-bold">Add New Address</p>
@@ -121,7 +128,7 @@ const NewAddress = (
       </div>
       <div className="flex flex-col space-y-1">
         <label htmlFor="name">
-          Address Name <span className="text-xs">(for reference)</span>
+          Address Name <span className="text-xs">(for reference)</span> *
         </label>
         <input
           name="name"
@@ -133,14 +140,17 @@ const NewAddress = (
       </div>
       <div className="flex space-x-1">
         <input
-          name="default"
+          name="isDefault"
           type="checkbox"
           onChange={handleCredentials}
         />
         <label htmlFor="default">Make this as default address</label>
       </div>
       <div className="text-center text-sm">
-        <button className="w-full rounded-2xl bg-orange-550 text-lg px-4 py-2 mb-2">
+        <button
+          className="w-full rounded-2xl bg-orange-550 text-lg px-4 py-2 mb-2"
+          disabled={loading}
+        >
           Create
         </button>
       </div>

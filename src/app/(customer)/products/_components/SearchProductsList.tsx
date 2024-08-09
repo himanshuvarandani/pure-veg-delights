@@ -1,10 +1,22 @@
+import api from "@/axios/instance"
 import ProductsList from "@/components/products/List"
-import { searchProducts } from "@/firebase/products"
+import { AxiosError } from "axios"
 
 const SearchProductsList = async (
   { query }: { query: string | undefined }
 ) => {
-  const products = await searchProducts(query || "")
+  const fetchProducts = async (): Promise<CategoryProducts> => {
+    return await api.get("/products", { params: { q: query } })
+      .then(response => response.data.products)
+      .catch((error: AxiosError) => {
+        console.log(
+          "Error Fetching Products With Search Query ", query, " ->", error
+        )
+        return {}
+      })
+  }
+
+  const products: CategoryProducts = await fetchProducts()
 
   return (
     <div>

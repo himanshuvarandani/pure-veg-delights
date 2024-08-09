@@ -1,8 +1,17 @@
-import { categoriesList } from "@/firebase/categories"
+import api from "@/axios/instance"
+import { AxiosError } from "axios"
 import Link from "next/link"
 
 const Categories = async () => {
-  const categories = await categoriesList()
+  const fetchCategories = async (): Promise<Array<string>> => {
+    return await api.get("/categories")
+      .then(response => response.data.categories as Array<string>)
+      .catch((error: AxiosError) => {
+        console.log("Error Fetching Categories ->", error)
+        return []
+      })
+  }
+  const categories = await fetchCategories()
 
   return (
     <div className="bg-orange-500 py-10 px-5 sm:px-10 lg:px-20">
@@ -10,7 +19,7 @@ const Categories = async () => {
         Categories
       </h3>
       <div className="flex flex-wrap justify-between items-center">
-        {categories.map(category => (
+        {categories && categories.map(category => (
           <Link
             key={category}
             href={`/products?q=${category}`}

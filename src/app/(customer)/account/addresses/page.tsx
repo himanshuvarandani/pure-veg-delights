@@ -1,61 +1,63 @@
 "use client"
 
+import api from "@/axios/instance"
 import AddressCard from "@/components/address/Card"
-import {
-  deleteAddress,
-  fetchAllAddresses,
-  updateDefaultAddress
-} from "@/firebase/address"
-import useAuth from "@/hooks/useAuth"
+import { AxiosError } from "axios"
 import Link from "next/link"
+import { usePathname } from "next/navigation"
 import { useEffect, useState } from "react"
 import toast from "react-hot-toast"
 import AddressesLoading from "./_components/Loading"
 
 const Addresses = () => {
-  const { isLoading, user } = useAuth()
+  const pathname = usePathname()
   const [addresses, setAddresses] = useState<Address[]>([])
   const [pageLoading, setPageLoading] = useState(true)
   const [updateLoading, setUpdateLoading] = useState(false)
 
   useEffect(() => {
-    if (isLoading || !user) return
+    if (pathname != '/account/addresses') return
     if (updateLoading) return
     setPageLoading(true)
 
-    fetchAllAddresses(user.uid)
-      .then(response => {
-        if (response.success) {
-          if (response.data) setAddresses(response.data?.addresses)
-          setPageLoading(false)
-        } else toast.error(response.error!)
+    api.get("/addresses")
+      .then((response) => {
+        setAddresses(response.data.addresses)
       })
-      .catch(() => toast.error("Error Fetching Addresses"))
-  }, [isLoading, user, updateLoading])
+      .catch((error: AxiosError) => {
+        console.log("Error Fetching All Addresses ->", error)
+        toast.error(error.response?.statusText || "Error Fetching All Addresses")
+      })
+      .finally(() => setPageLoading(false))
+  }, [updateLoading, pathname])
   
   const updateDefAddress = (addressId: string) => {
     if (updateLoading) return
 
     setUpdateLoading(true)
-    updateDefaultAddress(user?.uid!, addressId)
-      .then(response => {
-        if (response.success) toast.success("Default Address Changed")
-        else toast.error(response.error!)
+    api.put(`/addresses/default/${addressId}`)
+      .then(() => {
+        toast.success("Default Address Updated")
       })
-      .catch(() => toast.error("Error Updating Default Address"))
+      .catch((error: AxiosError) => {
+        console.log("Error Updating Default Address ->", error)
+        toast.error(error.response?.statusText || "Error Updating Default Address")
+      })
       .finally(() => setUpdateLoading(false))
   }
   
-  const deleteAddressDoc = (addressId: string) => {
+  const deleteAddress = (addressId: string) => {
     if (updateLoading) return
 
     setUpdateLoading(true)
-    deleteAddress(user?.uid!, addressId)
-      .then(response => {
-        if (response.success) toast.success("Address Deleted")
-        else toast.error(response.error!)
+    api.delete(`/addresses/${addressId}`)
+      .then(() => {
+        toast.success("Address Deleted Successfully")
       })
-      .catch(() => toast.error("Error Deleting Address"))
+      .catch((error: AxiosError) => {
+        console.log("Error Deleting Address ->", error)
+        toast.error(error.response?.statusText || "Error Deleting Address")
+      })
       .finally(() => setUpdateLoading(false))
   }
 
@@ -93,7 +95,7 @@ const Addresses = () => {
                     editable={true}
                     defAddButtonDisable={updateLoading}
                     updateDefAddress={updateDefAddress}
-                    deleteAddress={deleteAddressDoc}
+                    deleteAddress={deleteAddress}
                   />
                 </div>
               ))}

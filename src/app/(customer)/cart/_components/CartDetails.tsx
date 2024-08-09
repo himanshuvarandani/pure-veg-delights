@@ -10,6 +10,8 @@ import PlaceOrder from "./PlaceOrder"
 
 const CartDetails = () => {
   const { isLoading, cart } = useAuth()
+  const [itemsPrice, setItemsPrice] = useState<number>()
+  const [gst, setGST] = useState<number>(0)
   const [total, setTotal] = useState<number>(0)
   const [address, setAddress] = useState<Address | null>(null)
   const [pageLoading, setPageLoading] = useState(true)
@@ -17,12 +19,15 @@ const CartDetails = () => {
   useEffect(() => {
     if (isLoading || !cart) return
 
-    let itemTotal = 0
+    let itemsTotal = 0
     Object.keys(cart).map(productId => {
-      itemTotal += cart[productId].product.price * cart[productId].quantity
+      itemsTotal += cart[productId].product.price * cart[productId].quantity
     })
+    const gstTemp = (itemsTotal*18)/100
 
-    setTotal(itemTotal)
+    setItemsPrice(itemsTotal)
+    setGST(gstTemp)
+    setTotal(itemsTotal + gstTemp)
     setPageLoading(false)
   }, [isLoading, cart])
 
@@ -64,12 +69,12 @@ const CartDetails = () => {
               </h3>
               <div className="px-2 xs:px-5 md:px-0">
                 <div className="flex justify-between space-x-2">
-                  <h5 className="font-bold">Item Total</h5>
-                  <p>Rs. {total}/-</p>
+                  <h5 className="font-bold">Items Total</h5>
+                  <p>Rs. {itemsPrice}/-</p>
                 </div>
                 <div className="flex justify-between space-x-2 mt-2">
                   <h5 className="font-bold">G.S.T.</h5>
-                  <p>Rs. {0}/-</p>
+                  <p>Rs. {gst}/-</p>
                 </div>
                 <hr className="mt-5" />
                 <div className="flex justify-between space-x-2 mt-2">

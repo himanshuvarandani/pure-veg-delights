@@ -26,7 +26,7 @@ const AddressCard = ({
       <div className="flex justify-between items-center">
         <p className="font-bold">
           {!address.name? "Other" : address.name}
-          {!address.default ? null : (
+          {!address.isDefault ? null : (
             <span className="text-xs text-orange-550 font-normal ml-2 pb-1">(Default)</span>
           )}
         </p>
@@ -53,12 +53,14 @@ const AddressCard = ({
 
       <div>
         <p className="break-words px-2">
-          {address.addressLine1}, {address.addressLine2}, {address.city},
-          {address.state} - {address.pincode}
+          {address.addressLine1}, {!address.addressLine2
+            ? null
+            : address.addressLine2 + ", "
+          } {address.city}, {address.state} - {address.pincode}
         </p>
       </div>
 
-      {!editable || address.default || !updateDefAddress ? null : (
+      {!editable || address.isDefault || !updateDefAddress ? null : (
         <button
           className={`text-xs text-yellow-500 mt-3
             ${defAddButtonDisable ? "text-gray-300" : ""}
