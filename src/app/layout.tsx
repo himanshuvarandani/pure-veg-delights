@@ -1,4 +1,3 @@
-import Footer from "@/components/Footer"
 import { AuthContextProvider } from "@/context/AuthContext"
 import type { Metadata } from "next"
 import Script from "next/script"
@@ -25,7 +24,6 @@ export default function RootLayout({
             {children}
             {modal}
             <Toaster toastOptions={{ duration: 4000 }} />
-            <Footer />
           </AuthContextProvider>
         </body>
       </html>

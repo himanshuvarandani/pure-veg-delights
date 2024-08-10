@@ -1,6 +1,7 @@
 "use client"
 
 import AuthLoading from "@/components/auth/Loading"
+import Footer from "@/components/Footer"
 import Header from "@/components/Header"
 import useAuth from "@/hooks/useAuth"
 import { useRouter } from "next/navigation"
@@ -26,6 +27,7 @@ export default function AuthLayout({
       <main className="min-h-[35vh] sm:min-h-[65vh]">
         {(isLoading || user) ? (<AuthLoading />) : children}
       </main>
+      <Footer />
     </>
   )
 }
