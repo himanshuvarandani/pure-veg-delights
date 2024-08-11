@@ -1,12 +1,10 @@
 "use client"
 
-import api from "@/axios/instance"
+import { fetchOrders } from "@/actions/admin/orders"
 import OrdersLoading from "@/components/account/loading/Orders"
 import { faAngleLeft, faAngleRight } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { AxiosError } from "axios"
 import { useEffect, useState } from "react"
-import toast from "react-hot-toast"
 import Order from "./_components/Order"
 
 type TabsType = "all" | "new" | "current" | "delivery"
@@ -18,23 +16,19 @@ const AdminDashboard = () => {
   const [products, setProducts] = useState<ProductsObject>({})
   const [totalPages, setTotalPages] = useState<number>(1)
   const [page, setPage] = useState<number>(1)
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
   const pageSize = 10
 
   useEffect(() => {
     if (loading) return
 
     setLoading(true)
-    api.get("/orders", { params: { page, limit: pageSize } })
+    fetchOrders(page, pageSize, tab)
       .then(response => {
-        setOrders(response.data.orders as Array<Order>)
-        setAddresses(response.data.addresses as AddressesObject)
-        setProducts(response.data.products as ProductsObject)
-        setTotalPages(response.data.totalPages)
-      })
-      .catch((error: AxiosError) => {
-        console.log("Error Fetching Orders ->", error)
-        toast.error(error.response?.statusText || "Error Fetching Orders")
+        setOrders(response.orders as Array<Order>)
+        setAddresses(response.addresses as AddressesObject)
+        setProducts(response.products as ProductsObject)
+        setTotalPages(response.totalPages)
       })
       .finally(() => setLoading(false))
   }, [page, pageSize, tab])

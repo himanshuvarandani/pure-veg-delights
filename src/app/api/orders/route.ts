@@ -38,6 +38,7 @@ export async function GET(request: NextRequest) {
       
       const countPromise = ordersRef
         .where("userId", "==", userId)
+        .where("status", "!=", "Initiated")
         .get()
         .then(snapshot => snapshot.size)
 

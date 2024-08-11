@@ -1,9 +1,10 @@
 import { authenticate } from "@/app/api/authenticate"
-import { firestore } from "@/firebase/server"
+import { auth, firestore } from "@/firebase/server"
 import { FirebaseAppError } from "firebase-admin/app"
 import { DecodedIdToken } from "firebase-admin/auth"
 import { NextRequest, NextResponse } from "next/server"
 
+// Allow to fetch by admin or the user with same user id as order
 export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }
@@ -12,6 +13,8 @@ export async function GET(
     try {
       const decodedToken: DecodedIdToken = JSON.parse(request.headers.get("x-decoded-token") as string)
       const userId = decodedToken.uid
+      const user = await auth.getUser(decodedToken.uid)
+      const isAdmin: boolean = user.customClaims?.admin
 
       const ordersRef = firestore.collection("orders")
       const addressesRef = firestore.collection("addresses")
@@ -21,12 +24,14 @@ export async function GET(
       const orderDoc = await ordersRef.doc(orderId).get()
 
       const orderData = orderDoc.data()
-      if (!orderDoc.exists || orderData?.userId !== userId) {
+      if (
+        !orderDoc.exists || !orderData ||
+        (!isAdmin && orderData.userId !== userId)
+      )
         return NextResponse.json({}, {
           status: 404,
           statusText: "Order Not Found"
         })
-      }
 
       const order: Order = {
         id: orderDoc.id,

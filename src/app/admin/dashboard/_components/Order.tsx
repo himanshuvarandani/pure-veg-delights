@@ -1,3 +1,5 @@
+import { updateOrderStatus } from "@/actions/admin/orders"
+import { cancelOrder } from "@/actions/orders"
 import { faMultiply } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import Link from "next/link"
@@ -30,31 +32,52 @@ const Order = ({ order, address, products }: OrderProps) => {
           </p>
         </div>
         <div className="flex justify-end py-2 sm:py-0">
-          <button
-            className={`rounded-2xl px-2 py-1 ${order.status === "Completed"
-              ? "border-2 border-green-700 text-green-700"
-              : order.status === "Cancelled"
-                ? "border-2 border-orange-550 text-orange-550"
-                : "bg-green-700 text-white"
-            }`}
-          >
-            {order.status === "Placed"
-              ? "Accept"
-              : order.status === "Accepted"
-                ? "Mark as Prepared"
-                : order.status === "Prepared"
-                  ? "Complete"
-                  : order.status
-            }
-          </button>
-          {(order.status === "Completed" ||
-            order.status === "Cancelled") ? null : (
-            <button
-              className="rounded-2xl bg-red-500 text-white px-2 py-1 ml-2"
-            >
-              Cancel
-            </button>
-          )}
+          {
+            order.status === "Initiated" ||
+            order.status === "Cancelled" ||
+            order.status === "Completed"
+            ? (
+              <p
+                className={`rounded-2xl px-2 py-1 ${
+                  order.status === "Completed"
+                    ? "border-2 border-green-700 text-green-700"
+                    : "border-2 border-orange-550 text-orange-550"
+                }`}
+              >
+                {order.status}
+              </p>
+            ) : (
+              <>
+                <button
+                  className="rounded-2xl px-2 py-1 bg-green-700 text-white"
+                  onClick={(event) => {
+                    event.preventDefault()
+                    event.stopPropagation()
+                    updateOrderStatus(order.id!, order.status)
+                  }}
+                >
+                  {order.status === "Placed"
+                    ? "Accept"
+                    : order.status === "Accepted"
+                      ? "Mark as Prepared"
+                      : "Complete"
+                  }
+                </button>
+                {order.status == "Placed" ? (
+                  <button
+                    className="rounded-2xl bg-red-500 text-white px-2 py-1 ml-2"
+                    onClick={(event) => {
+                      event.preventDefault()
+                      event.stopPropagation()
+                      cancelOrder(order.id!)
+                    }}
+                  >
+                    Cancel
+                  </button>
+                ) : null}
+              </>
+            )
+          }
         </div>
       </div>
       <div className="px-2 my-3">

@@ -1,6 +1,7 @@
 "use client"
 
-import { fetchOrderDetails } from "@/actions/orders"
+import { updateOrderStatus } from "@/actions/admin/orders"
+import { cancelOrder, fetchOrderDetails } from "@/actions/orders"
 import OrderLoading from "@/components/account/loading/Order"
 import AddressCard from "@/components/address/Card"
 import AddressLoadingCard from "@/components/address/Loading"
@@ -16,6 +17,7 @@ const Order = ({ orderId }: PropsType) => {
   const [address, setAddress] = useState<Address | null>(null)
   const [products, setProducts] = useState<ProductsObject>({})
   const [loading, setLoading] = useState(false)
+  const [refresh, setRefresh] = useState(false)
 
   useEffect(() => {
     if (loading && !orderId) return
@@ -28,7 +30,7 @@ const Order = ({ orderId }: PropsType) => {
         setProducts(response.products as ProductsObject)
       })
       .finally(() => setLoading(false))
-  }, [orderId])
+  }, [refresh, orderId])
 
   return loading ? (<OrderLoading />) : (
     <div>
@@ -46,6 +48,42 @@ const Order = ({ orderId }: PropsType) => {
         </div>
       ) : (
         <div>
+          {
+            !order ||
+            order.status === "Initiated" ||
+            order.status === "Cancelled" ||
+            order.status === "Completed"
+            ? null
+            : (
+              <div className="flex justify-center items-center mt-5">
+                <button
+                  className="rounded-2xl px-4 py-2 bg-green-700 text-white"
+                  onClick={() => 
+                    updateOrderStatus(order.id!, order.status)
+                      .then(() => setRefresh(!refresh))
+                  }
+                >
+                  {order.status === "Placed"
+                    ? "Accept"
+                    : order.status === "Accepted"
+                      ? "Mark as Prepared"
+                      : "Complete"
+                  }
+                </button>
+                {order.status == "Placed" ? (
+                  <button
+                    className="rounded-2xl bg-red-500 text-white px-4 py-2 ml-2"
+                    onClick={() => 
+                      cancelOrder(order.id!)
+                        .then(() => setRefresh(!refresh))
+                    }
+                  >
+                    Cancel
+                  </button>
+                ) : null}
+              </div>
+            )
+          }
           <div className="flex justify-between items-center">
             <h3 className="text-xl font-bold text-orange-550">
               Status
