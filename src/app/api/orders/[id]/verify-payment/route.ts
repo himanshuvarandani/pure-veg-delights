@@ -71,7 +71,7 @@ export async function PUT(
           status: "Cancelled",
           paymentStatus: "Failed",
           razorpayPaymentId: razorpayPaymentId,
-          "timestamps.placed": FieldValue.serverTimestamp()
+          "timestamps.cancelled": FieldValue.serverTimestamp()
         })
 
         return NextResponse.json({}, {

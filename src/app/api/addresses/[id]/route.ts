@@ -1,9 +1,9 @@
+import { authenticate } from "@/app/api/authenticate"
 import { firestore } from "@/firebase/server"
 import { FirebaseAppError } from "firebase-admin/app"
 import { DecodedIdToken } from "firebase-admin/auth"
 import { FieldValue } from "firebase-admin/firestore"
 import { NextRequest, NextResponse } from "next/server"
-import { authenticate } from "../../authenticate"
 
 export async function GET(
   request: NextRequest,
@@ -110,7 +110,11 @@ export async function PUT(
         // Run Firestore transaction
         const newAddressRef = addressesRef.doc()
         await firestore.runTransaction(async (transaction) => {
-          transaction.update(addressRef, { isActive: false, isDefault: false })
+          transaction.update(addressRef, {
+            isActive: false,
+            isDefault: false,
+            updatedAt: FieldValue.serverTimestamp(),
+          })
 
           transaction.set(newAddressRef, {
             userId,
@@ -123,7 +127,7 @@ export async function PUT(
             country,
             isActive: true,
             isDefault: currentAddress.isDefault,
-            createdAt: FieldValue.serverTimestamp(),
+            createdAt: currentAddress.createdAt,
             updatedAt: FieldValue.serverTimestamp(),
           })
         })
@@ -196,13 +200,20 @@ export async function DELETE(
 
           if (!addressSnapshot.empty) {
             const newDefaultAddressDoc = addressSnapshot.docs[0]
-            transaction.update(newDefaultAddressDoc.ref, { isDefault: true })
+            transaction.update(newDefaultAddressDoc.ref, {
+              isDefault: true,
+              updatedAt: FieldValue.serverTimestamp(),
+            })
           }
         }
         
         const ordersSnapshot = await ordersRef.where('addressId', '==', addressId).get()
         if (!ordersSnapshot.empty) {
-          transaction.update(addressRef, { isActive: false, isDefault: false })
+          transaction.update(addressRef, {
+            isActive: false,
+            isDefault: false,
+            updatedAt: FieldValue.serverTimestamp(),
+          })
         } else {
           transaction.delete(addressRef)
         }

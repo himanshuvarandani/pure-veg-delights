@@ -1,8 +1,9 @@
+import { authenticate } from "@/app/api/authenticate"
 import { firestore } from "@/firebase/server"
 import { FirebaseAppError } from "firebase-admin/app"
 import { DecodedIdToken } from "firebase-admin/auth"
+import { FieldValue } from "firebase-admin/firestore"
 import { NextRequest, NextResponse } from "next/server"
-import { authenticate } from "../../../authenticate"
 
 export async function PUT(
   request: NextRequest,
@@ -37,10 +38,16 @@ export async function PUT(
           
           if (!defaultAddressSnapshot.empty) {
             const defaultAddressDoc = defaultAddressSnapshot.docs[0]
-            transaction.update(defaultAddressDoc.ref, { isDefault: false })
+            transaction.update(defaultAddressDoc.ref, {
+              isDefault: false,
+              updatedAt: FieldValue.serverTimestamp(),
+            })
           }
 
-          transaction.update(addressRef, { isDefault: true })
+          transaction.update(addressRef, {
+            isDefault: true,
+            updatedAt: FieldValue.serverTimestamp(),
+          })
         })
       }
 
