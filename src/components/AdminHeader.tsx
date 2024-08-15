@@ -1,6 +1,5 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import SessionLinks from './SessionLinks'
 
 const AdminHeader = () => {
   return (
@@ -22,16 +21,17 @@ const AdminHeader = () => {
           <Link href="/admin/products" className="hidden md:block text-sm font-semibold">
             Products
           </Link>
+          <Link href="/admin/products/deleted" className="hidden md:block text-sm font-semibold">
+            Disabled Products
+          </Link>
         </div>
         <div className="flex items-center space-x-2">
-          <SessionLinks>
-            <Link href="/admin/dashboard" className="px-3 py-2">
-              Dashboard
-            </Link>
-            <Link href="/admin/analysis" className="px-3 py-2">
-              Analysis
-            </Link>
-          </SessionLinks>
+          <Link href="/admin/dashboard" className="px-3 py-2">
+            Dashboard
+          </Link>
+          <Link href="/admin/analysis" className="px-3 py-2">
+            Analysis
+          </Link>
         </div>
       </div>
     </div>

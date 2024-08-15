@@ -8,6 +8,7 @@ import {
 } from "firebase/auth"
 import { auth } from "./client"
 import { FirebaseAppError } from "firebase-admin/app"
+import toast from "react-hot-toast"
 
 export const signUp = async (
   name: string,
@@ -67,6 +68,16 @@ export const signIn = async (
     }
 
     return { success: false, error: message }
+  }
+}
+
+export const signOut = async () => {
+  try {
+    await auth.signOut()
+  } catch (err: any) {
+    const error: FirebaseAppError = err
+    console.log("Error During SignOut ->", error)
+    toast.error("Error During Logout")
   }
 }
 

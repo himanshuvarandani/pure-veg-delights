@@ -1,9 +1,7 @@
-import { faUser } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Image from 'next/image'
 import Link from 'next/link'
 import CartLink from './CartLink'
-import SessionLinks from './SessionLinks'
+import AccountLinks from './AccountLinks'
 
 export default function Header() {
   return (
@@ -22,20 +20,13 @@ export default function Header() {
             </div>
             <h1 className="font-bold">SHRI RAM<br />Pure Veg</h1>
           </Link>
-          <Link href="/menu" className="hidden md:block text-sm font-semibold">
-            Menu
-          </Link>
           <Link href="/products" className="hidden md:block text-sm font-semibold">
             Products
           </Link>
         </div>
         <div className="flex items-center space-x-2">
           <CartLink />
-          <SessionLinks>
-            <Link href="/account" className="px-3 py-2">
-              <FontAwesomeIcon icon={faUser} height={30} />
-            </Link>
-          </SessionLinks>
+          <AccountLinks />
         </div>
       </div>
     </div>
