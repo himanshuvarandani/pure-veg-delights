@@ -25,10 +25,10 @@ const AdminHeader = () => {
         </div>
         <div className="flex items-center space-x-2">
           <SessionLinks>
-            <Link href="/dashboard" className="px-3 py-2">
+            <Link href="/admin/dashboard" className="px-3 py-2">
               Dashboard
             </Link>
-            <Link href="/analysis" className="px-3 py-2">
+            <Link href="/admin/analysis" className="px-3 py-2">
               Analysis
             </Link>
           </SessionLinks>

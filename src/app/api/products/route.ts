@@ -8,16 +8,12 @@ export async function GET(request: NextRequest) {
   try {
     const productsRef = firestore.collection("products")
 
-    let productsSnapshot: FirebaseFirestore.QuerySnapshot<FirebaseFirestore.DocumentData, FirebaseFirestore.DocumentData>
-    if (!searchQuery || searchQuery.trim() == "") {
-      productsSnapshot = await productsRef.get()
-    } else {
-      const productsQuery = productsRef
+    let productsQuery = productsRef.where("isActive", "==", true)
+    if (searchQuery && searchQuery.trim() !== "")
+      productsQuery = productsQuery
         .where("tags", "array-contains-any", searchQuery.split(" "))
-      
-      productsSnapshot = await productsQuery.get()
-    }
 
+    const productsSnapshot = await productsQuery.get()
     const products: CategoryProducts = {}
     productsSnapshot.docs.forEach(productDoc => {
       const product = productDoc.data()

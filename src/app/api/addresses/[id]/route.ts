@@ -15,7 +15,7 @@ export async function GET(
       const userId = decodedToken.uid
 
       const addressId = params.id
-      const addressesRef = firestore.collection('addresses')
+      const addressesRef = firestore.collection("addresses")
       const addressDoc = await addressesRef.doc(addressId).get()
       
       const addressData = addressDoc.data()
@@ -65,19 +65,18 @@ export async function PUT(
     
     try {
       // Validation
-      if (!name || !addressLine1 || !city || !state || !pincode || !country) {
+      if (!name || !addressLine1 || !city || !state || !pincode || !country)
         return NextResponse.json({}, {
           status: 400,
           statusText: "Missing Required Fields",
         })
-      }
 
       const decodedToken: DecodedIdToken = JSON.parse(request.headers.get("x-decoded-token") as string)
       const userId = decodedToken.uid
       
       const addressId = params.id
-      const addressesRef = firestore.collection('addresses')
-      const ordersRef = firestore.collection('orders')
+      const addressesRef = firestore.collection("addresses")
+      const ordersRef = firestore.collection("orders")
       
       // Check if the address exists and userId matches or not
       const addressRef = addressesRef.doc(addressId)
@@ -105,7 +104,9 @@ export async function PUT(
           statusText: "No Changes Detected"
         })
 
-      const ordersSnapshot = await ordersRef.where('addressId', '==', addressId).get()
+      const ordersSnapshot = await ordersRef
+        .where("addressId", "==", addressId)
+        .get()
       if (!ordersSnapshot.empty) {
         // Run Firestore transaction
         const newAddressRef = addressesRef.doc()
@@ -138,7 +139,7 @@ export async function PUT(
         )
       }
 
-      addressRef.update({
+      await addressRef.update({
         name,
         addressLine1,
         addressLine2,
@@ -174,8 +175,8 @@ export async function DELETE(
       const userId = decodedToken.uid
       
       const addressId = params.id
-      const addressesRef = firestore.collection('addresses')
-      const ordersRef = firestore.collection('orders')
+      const addressesRef = firestore.collection("addresses")
+      const ordersRef = firestore.collection("orders")
       
       // Check if the address exists and userId matches or not
       const addressRef = addressesRef.doc(addressId)
@@ -192,8 +193,8 @@ export async function DELETE(
       await firestore.runTransaction(async (transaction) => {
         if (address.isDefault) {
           const addressQuery = addressesRef
-              .where('userId', '==', userId)
-              .where('isActive', '==', true)
+              .where("userId", "==", userId)
+              .where("isActive", "==", true)
               .orderBy("updatedAt")
               .limit(1)
           const addressSnapshot = await addressQuery.get()
@@ -207,7 +208,7 @@ export async function DELETE(
           }
         }
         
-        const ordersSnapshot = await ordersRef.where('addressId', '==', addressId).get()
+        const ordersSnapshot = await ordersRef.where("addressId", "==", addressId).get()
         if (!ordersSnapshot.empty) {
           transaction.update(addressRef, {
             isActive: false,

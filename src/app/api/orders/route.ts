@@ -178,7 +178,7 @@ export async function POST(request: NextRequest) {
       const verifiedProducts: ProductsObject = {}
       try {
         productSnapshots.forEach(snapshot => {
-          if (!snapshot.exists) {
+          if (!snapshot.exists || !snapshot.data()?.isActive) {
             throw new Error(`Product ${snapshot.id} not found`)
           }
           verifiedProducts[snapshot.id] = snapshot.data() as Product

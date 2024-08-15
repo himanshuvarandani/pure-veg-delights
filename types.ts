@@ -7,11 +7,16 @@ type APIResponse<T> = {
 type Product = {
   id: string
   name: string
+  description: string
   price: number
   category: string
   image: string
   tags: Array<string>
   todaySpecial: boolean
+  createdAt: Date
+  updatedAt: Date
+  isActive: boolean
+  isDeleted: boolean
 }
 
 type ProductsObject = { [key: string]: Product }
